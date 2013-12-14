@@ -22,4 +22,8 @@ const int GRID_SIZE = 20;
 const int MAX_WIDTH = 40;
 const int MAX_HEIGHT = 30;
 
+const String GROUP_FOOD = 'food';
+
 Random random = new Random();
+
+int indexInGrid(int x, int y) => x + y * MAX_WIDTH;

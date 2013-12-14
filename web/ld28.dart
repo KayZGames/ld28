@@ -29,7 +29,7 @@ class Game extends GameBase {
 
 
   void createEntities() {
-    addEntity([new Transform(startNode.x, startNode.y), new PathFinder(), new Renderable('player_'), new Directed()]);
+    addEntity([new Transform(startNode.x, startNode.y), new PathFinder(), new Renderable('player_'), new Directed(), new State()]);
     map.where((tile) => null != tile).forEach((tile) {
       addEntity([tile]);
     });
@@ -38,6 +38,7 @@ class Game extends GameBase {
   List<EntitySystem> getSystems() {
     return [
             new PathfindingSystem(new TerrainMap(map, goalNode)),
+            new FoodDigestionSystem(),
             new CanvasCleaningSystem(canvas),
             new TerrainRenderingSystem(ctx, spriteSheet),
             new SpriteDirectionSystem(),
@@ -47,6 +48,8 @@ class Game extends GameBase {
   }
 
   Future onInit() {
+    var gm = new GroupManager();
+    world.addManager(gm);
     return HttpRequest.getString('assets/ld28/levels/00.txt').then((content) {
       var tiles = content.split('');
       tiles.where((tile) => tile != '\n' && tile != '\r').forEach((tile) {
@@ -60,7 +63,8 @@ class Game extends GameBase {
         }
         map.add(tt);
         if (tile == 'C') {
-          addEntity([new Transform(x, y), new Renderable('carrot')]);
+          var food = addEntity([new Transform(x, y), new Renderable('carrot'), new Food(filling: 20, hardness: 50, sweetness: 5)]);
+          gm.add(food, GROUP_FOOD);
         } else if (tile == 'F') {
           addEntity([new Transform(x, y), new Renderable('fairy')]);
         }

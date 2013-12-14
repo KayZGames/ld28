@@ -42,3 +42,15 @@ class Renderable extends Component {
 }
 
 class Directed extends Component {}
+
+class Food extends Component {
+  int filling, hardness, sweetness;
+  Food({this.filling: 20, this.hardness: 20, this.sweetness: 20});
+}
+
+class State extends Component {
+  int hunger = 0,
+      looseness = 0,
+      caries = 0;
+  State();
+}
