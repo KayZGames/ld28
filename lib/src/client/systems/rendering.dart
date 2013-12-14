@@ -42,3 +42,52 @@ class SpriteRenderingSystem extends EntityProcessingSystem {
     ctx.restore();
   }
 }
+
+class StateRenderingSystem extends EntityProcessingSystem {
+  CanvasRenderingContext2D ctx;
+  int width, height;
+  CanvasQuery stateCq;
+  ComponentMapper<State> sm;
+  double hungerWidth, cariesWidth, loosenessWidth;
+
+  StateRenderingSystem(CanvasElement canvas) : ctx = canvas.context2D,
+                                               width = canvas.width,
+                                               height = canvas.height,
+                                               super(Aspect.getAspectForAllOf([State]));
+
+
+  void initialize() {
+    sm = new ComponentMapper<State>(State, world);
+
+    stateCq = cq(width, height);
+    stateCq.context2D..font = '18px Verdana'
+                     ..textBaseline = 'top'
+                     ..fillStyle = 'green'
+                     ..strokeStyle = 'black';
+
+    hungerWidth = stateCq.measureText('Hunger: ').width;
+    loosenessWidth = stateCq.measureText('Looseness: ').width;
+    cariesWidth = stateCq.measureText('Caries: ').width;
+    stateCq..strokeText('Hunger:', width - 100 - hungerWidth, 0)
+           ..fillText('Hunger:', width - 100 - hungerWidth, 0)
+           ..strokeText('Looseness:', width - 100 - loosenessWidth, 25)
+           ..fillText('Looseness:', width - 100 - loosenessWidth, 25)
+           ..strokeText('Caries:', width - 100 - cariesWidth, 50)
+           ..fillText('Caries:', width - 100 - cariesWidth, 50)
+           ..strokeRect(width - 100, 0, 100, 20)
+           ..strokeRect(width - 100, 25, 100, 20)
+           ..strokeRect(width - 100, 50, 100, 20);
+  }
+
+  void processEntity(Entity entity) {
+    var s = sm.get(entity);
+
+    ctx.drawImage(stateCq.canvas, 0, 0);
+    ctx.setFillColorRgb(50 + s.hunger * 2, 200 - s.hunger * 2, 0);
+    ctx.fillRect(width - 100, 0, s.hunger, 20);
+    ctx.setFillColorRgb(50 + s.looseness * 2, 200 - s.looseness * 2, 0);
+    ctx.fillRect(width - 100, 25, s.looseness, 20);
+    ctx.setFillColorRgb(50 + s.caries * 2, 200 - s.caries * 2, 0);
+    ctx.fillRect(width - 100, 50, s.caries, 20);
+  }
+}

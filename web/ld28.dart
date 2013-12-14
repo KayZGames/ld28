@@ -38,11 +38,13 @@ class Game extends GameBase {
   List<EntitySystem> getSystems() {
     return [
             new PathfindingSystem(new TerrainMap(map, goalNode)),
+            new HungerSystem(),
             new FoodDigestionSystem(),
             new CanvasCleaningSystem(canvas),
             new TerrainRenderingSystem(ctx, spriteSheet),
             new SpriteDirectionSystem(),
             new SpriteRenderingSystem(ctx, spriteSheet),
+            new StateRenderingSystem(canvas),
             new FpsRenderingSystem(ctx)
     ];
   }

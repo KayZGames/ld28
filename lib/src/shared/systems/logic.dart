@@ -16,6 +16,20 @@ class SpriteDirectionSystem extends EntityProcessingSystem {
   }
 }
 
+class HungerSystem extends IntervalEntityProcessingSystem {
+  ComponentMapper<State> sm;
+  HungerSystem() : super(200, Aspect.getAspectForAllOf([State]));
+
+  void initialize() {
+    sm = new ComponentMapper<State>(State, world);
+  }
+
+  void processEntity(Entity entity) {
+    var s = sm.get(entity);
+    s.hunger = min(100, s.hunger + 1);
+  }
+}
+
 class FoodDigestionSystem extends EntityProcessingSystem {
   ComponentMapper<Transform> tm;
   ComponentMapper<State> sm;
@@ -44,9 +58,9 @@ class FoodDigestionSystem extends EntityProcessingSystem {
     if (null != food) {
       var s = sm.get(entity);
       var f = fm.get(food);
-      s.hunger -= f.filling;
-      s.looseness += f.hardness;
-      s.caries += f.sweetness;
+      s.hunger = max(0, s.hunger - f.filling);
+      s.looseness = min(100, s.looseness + f.hardness);
+      s.caries = min(100, s.caries + f.sweetness);
       foodEntities[index] = null;
       food.deleteFromWorld();
     }
