@@ -48,7 +48,7 @@ class Game extends GameBase {
   Future onInit() {
     return HttpRequest.getString('assets/ld28/levels/00.txt').then((content) {
       var tiles = content.split('');
-      tiles.forEach((tile) {
+      tiles.where((tile) => tile != '\n' && tile != '\r').forEach((tile) {
         var tt = new TerrainTile(map.length % MAX_WIDTH, map.length ~/ MAX_WIDTH, costs[tile], sprites[tile]);
         if (tile == 'S') {
           startNode = tt;
