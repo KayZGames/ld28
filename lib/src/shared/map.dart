@@ -9,7 +9,7 @@ class TerrainMap implements Graph<TerrainTile> {
 
   Iterable<TerrainTile> get allNodes => map;
   num getDistance(TerrainTile a, TerrainTile b) => b.cost;
-  num getHeuristicDistance(TerrainTile a, TerrainTile b) => max(a.x - b.x, a.y - b.y);
+  num getHeuristicDistance(TerrainTile a, TerrainTile b) => max(a.x - b.x, a.y - b.y) * GRID_SIZE;
   Iterable<TerrainTile> getNeighboursOf(TerrainTile node) {
     var result = [];
     if (node.y > 0) {

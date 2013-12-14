@@ -1,35 +1,44 @@
 part of client;
 
-class RenderingSystem extends EntityProcessingSystem {
-  CanvasRenderingContext2D ctx;
-  ComponentMapper<Transform> tm;
-  RenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([Transform]));
-
-  void initialize() {
-    tm = new ComponentMapper<Transform>(Transform, world);
-  }
-
-  void processEntity(Entity entity) {
-    var t = tm.get(entity);
-    ctx.fillStyle = 'blue';
-    ctx.fillRect(t.x * GRID_SIZE, t.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
-  }
-}
-
-
 class TerrainRenderingSystem extends EntityProcessingSystem {
   CanvasRenderingContext2D ctx;
+  SpriteSheet spriteSheet;
   ComponentMapper<TerrainTile> tm;
-  TerrainRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([TerrainTile]));
+  TerrainRenderingSystem(this.ctx, this.spriteSheet) : super(Aspect.getAspectForAllOf([TerrainTile]));
 
   void initialize() {
     tm = new ComponentMapper<TerrainTile>(TerrainTile, world);
   }
 
+  void processEntity(Entity entity) {
+    var t = tm.get(entity);
+    var sprite = spriteSheet['${t.spriteName}.png'];
+    ctx.save();
+    ctx.translate(t.x * GRID_SIZE, t.y* GRID_SIZE );
+    ctx.drawImageToRect(spriteSheet.image, sprite.dst, sourceRect: sprite.src);
+    ctx.restore();
+  }
+}
+
+class SpriteRenderingSystem extends EntityProcessingSystem {
+  CanvasRenderingContext2D ctx;
+  SpriteSheet spriteSheet;
+  ComponentMapper<Transform> tm;
+  ComponentMapper<Renderable> rm;
+  SpriteRenderingSystem(this.ctx, this.spriteSheet) : super(Aspect.getAspectForAllOf([Renderable, Transform]));
+
+  void initialize() {
+    tm = new ComponentMapper<Transform>(Transform, world);
+    rm = new ComponentMapper<Renderable>(Renderable, world);
+  }
 
   void processEntity(Entity entity) {
     var t = tm.get(entity);
-    ctx.fillStyle = t.sprite;
-    ctx.fillRect(t.x * GRID_SIZE, t.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+    var r = rm.get(entity);
+    var sprite = spriteSheet['${r.spriteName}.png'];
+    ctx.save();
+    ctx.translate(t.x * GRID_SIZE, t.y* GRID_SIZE );
+    ctx.drawImageToRect(spriteSheet.image, sprite.dst, sourceRect: sprite.src);
+    ctx.restore();
   }
 }

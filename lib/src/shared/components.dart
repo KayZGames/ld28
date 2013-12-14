@@ -1,16 +1,44 @@
 part of shared;
 
 class Transform extends Component {
-  int x, y;
-  Transform(this.x, this.y);
+  int _x, _y;
+  String direction = 'right';
+  Transform(this._x, this._y);
+  void set x(int value) {
+    if (value > x) {
+      direction = 'right';
+    } else if (value < x) {
+      direction = 'left';
+    }
+    _x = value;
+  }
+  int get x => _x;
+  void set y(int value) {
+    if (value > y) {
+      direction = 'down';
+    } else if (value < y) {
+      direction = 'up';
+    }
+    _y = value;
+  }
+  int get y => _y;
 }
 
 class TerrainTile extends Component with Node {
   int x, y;
   int cost;
-  String sprite;
-  TerrainTile(this.x, this.y, this.cost, this.sprite);
+  String spriteName;
+  TerrainTile(this.x, this.y, this.cost, this.spriteName);
   String toString() => '$x:$y';
 }
 
 class PathFinder extends Component {}
+
+class Renderable extends Component {
+  String _spriteName;
+  String subspriteName = '';
+  Renderable(this._spriteName);
+  String get spriteName => '$_spriteName$subspriteName';
+}
+
+class Directed extends Component {}
