@@ -18,7 +18,7 @@ class SpriteDirectionSystem extends EntityProcessingSystem {
 
 class HungerSystem extends IntervalEntityProcessingSystem {
   ComponentMapper<State> sm;
-  HungerSystem() : super(200, Aspect.getAspectForAllOf([State]));
+  HungerSystem() : super(200, Aspect.getAspectForAllOf([State]).exclude([Eating]));
 
   void initialize() {
     sm = new ComponentMapper<State>(State, world);
@@ -26,7 +26,7 @@ class HungerSystem extends IntervalEntityProcessingSystem {
 
   void processEntity(Entity entity) {
     var s = sm.get(entity);
-    s.hunger = min(100, s.hunger + 1);
+    s.hunger = min(100.0, s.hunger + 1);
   }
 }
 
@@ -34,6 +34,7 @@ class FoodDigestionSystem extends EntityProcessingSystem {
   ComponentMapper<Transform> tm;
   ComponentMapper<State> sm;
   ComponentMapper<Food> fm;
+  ComponentMapper<Eating> em;
   List<Entity> foodEntities;
   FoodDigestionSystem() : super(Aspect.getAspectForAllOf([Transform, State]));
 
@@ -41,6 +42,7 @@ class FoodDigestionSystem extends EntityProcessingSystem {
     tm = new ComponentMapper<Transform>(Transform, world);
     sm = new ComponentMapper<State>(State, world);
     fm = new ComponentMapper<Food>(Food, world);
+    em = new ComponentMapper<Eating>(Eating, world);
 
     foodEntities = new List(MAX_WIDTH * MAX_HEIGHT);
     GroupManager gm = world.getManager(GroupManager);
@@ -58,11 +60,22 @@ class FoodDigestionSystem extends EntityProcessingSystem {
     if (null != food) {
       var s = sm.get(entity);
       var f = fm.get(food);
-      s.hunger = max(0, s.hunger - f.filling);
-      s.looseness = min(100, s.looseness + f.hardness);
-      s.caries = min(100, s.caries + f.sweetness);
-      foodEntities[index] = null;
-      food.deleteFromWorld();
+      var mult = world.delta/f.timeToEat;
+      s.hunger = max(0.0, s.hunger - f.filling * mult);
+      s.looseness = min(100.0, s.looseness + f.hardness * mult);
+      s.caries = min(100.0, s.caries + f.sweetness * mult);
+      f.timeLeftToEat -= world.delta;
+      var eating = em.getSafe(entity);
+      if (null == eating) {
+        entity.addComponent(new Eating());
+        entity.changedInWorld();
+      }
+      if (f.timeLeftToEat < 0.0) {
+        foodEntities[index] = null;
+        food.deleteFromWorld();
+        entity.removeComponent(Eating);
+        entity.changedInWorld();
+      }
     }
   }
 }

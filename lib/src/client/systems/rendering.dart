@@ -83,11 +83,11 @@ class StateRenderingSystem extends EntityProcessingSystem {
     var s = sm.get(entity);
 
     ctx.drawImage(stateCq.canvas, 0, 0);
-    ctx.setFillColorRgb(50 + s.hunger * 2, 200 - s.hunger * 2, 0);
+    ctx.setFillColorRgb(50 + s.hunger.toInt() * 2, 200 - s.hunger.toInt() * 2, 0);
     ctx.fillRect(width - 100, 0, s.hunger, 20);
-    ctx.setFillColorRgb(50 + s.looseness * 2, 200 - s.looseness * 2, 0);
+    ctx.setFillColorRgb(50 + s.looseness.toInt() * 2, 200 - s.looseness.toInt() * 2, 0);
     ctx.fillRect(width - 100, 25, s.looseness, 20);
-    ctx.setFillColorRgb(50 + s.caries * 2, 200 - s.caries * 2, 0);
+    ctx.setFillColorRgb(50 + s.caries.toInt() * 2, 200 - s.caries.toInt() * 2, 0);
     ctx.fillRect(width - 100, 50, s.caries, 20);
   }
 }

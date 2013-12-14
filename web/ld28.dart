@@ -65,7 +65,7 @@ class Game extends GameBase {
         }
         map.add(tt);
         if (tile == 'C') {
-          var food = addEntity([new Transform(x, y), new Renderable('carrot'), new Food(filling: 20, hardness: 50, sweetness: 5)]);
+          var food = addEntity([new Transform(x, y), new Renderable('carrot'), new Food(filling: 20.0, hardness: 50.0, sweetness: 5.0)]);
           gm.add(food, GROUP_FOOD);
         } else if (tile == 'F') {
           addEntity([new Transform(x, y), new Renderable('fairy')]);
