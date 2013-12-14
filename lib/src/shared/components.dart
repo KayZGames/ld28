@@ -28,7 +28,11 @@ class TerrainTile extends Component with Node {
   int x, y;
   int cost;
   String spriteName;
-  TerrainTile(this.x, this.y, this.cost, this.spriteName);
+  bool occupied, occupiable;
+  TerrainTile(this.x, this.y, TileInfo tileInfo) : cost = tileInfo.cost,
+                                                   spriteName = tileInfo.sprite,
+                                                   occupied = tileInfo.occupied,
+                                                   occupiable = tileInfo.occupiable;
   String toString() => '$x:$y';
 }
 
@@ -59,3 +63,4 @@ class State extends Component {
 }
 
 class Eating extends Component {}
+class Mouse extends Component {}

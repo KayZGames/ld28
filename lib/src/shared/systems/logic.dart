@@ -36,7 +36,8 @@ class FoodDigestionSystem extends EntityProcessingSystem {
   ComponentMapper<Food> fm;
   ComponentMapper<Eating> em;
   List<Entity> foodEntities;
-  FoodDigestionSystem() : super(Aspect.getAspectForAllOf([Transform, State]));
+  TerrainMap map;
+  FoodDigestionSystem(this.map) : super(Aspect.getAspectForAllOf([Transform, State]));
 
   void initialize() {
     tm = new ComponentMapper<Transform>(Transform, world);
@@ -72,6 +73,7 @@ class FoodDigestionSystem extends EntityProcessingSystem {
       }
       if (f.timeLeftToEat < 0.0) {
         foodEntities[index] = null;
+        map.free(index);
         food.deleteFromWorld();
         entity.removeComponent(Eating);
         entity.changedInWorld();
@@ -79,5 +81,4 @@ class FoodDigestionSystem extends EntityProcessingSystem {
     }
   }
 }
-
 

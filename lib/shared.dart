@@ -1,6 +1,7 @@
 library shared;
 
 import 'dart:math';
+export 'dart:math';
 import 'dart:collection';
 export 'dart:collection';
 
@@ -27,3 +28,5 @@ const String GROUP_FOOD = 'food';
 Random random = new Random();
 
 int indexInGrid(int x, int y) => x + y * MAX_WIDTH;
+
+

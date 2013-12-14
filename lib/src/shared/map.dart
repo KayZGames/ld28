@@ -1,5 +1,12 @@
 part of shared;
 
+class TileInfo {
+  int cost;
+  String sprite;
+  bool occupiable, occupied;
+  TileInfo(this.cost, this.sprite, this.occupiable, this.occupied);
+}
+
 class TerrainMap implements Graph<TerrainTile> {
   List<TerrainTile> completeMap;
   List<TerrainTile> map;
@@ -34,5 +41,25 @@ class TerrainMap implements Graph<TerrainTile> {
     }
   }
 
+  bool occupiable(int index) {
+    var terrainTile = completeMap[index];
+    if (null == terrainTile) {
+      print('no tile @$index');
+      return false;
+    }
+    return terrainTile.occupiable;
+  }
+
+  bool acceptsOccupant(int index) {
+    return occupiable(index) && !completeMap[index].occupied;
+  }
+
+  void occupy(int index) {
+    completeMap[index].occupied = true;
+  }
+
+  void free(int index) {
+    completeMap[index].occupied = false;
+  }
 
 }

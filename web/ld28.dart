@@ -9,27 +9,26 @@ void main() {
 }
 
 class Game extends GameBase {
-  var costs = {' ': 10,
-               'S': 10,
-               'E': 10,
-               'F': 10,
-               'C': -100};
-  var sprites = {'_': 'void',
-                 ' ': 'floor',
-                 '#': 'wall',
-                 'S': 'floor',
-                 'F': 'floor',
-                 'C': 'floor',
-                 'E': 'floor'};
+  var tileInfo = {'_': new TileInfo(null, 'void', false, false),
+                  ' ': new TileInfo(10, 'floor', true, false),
+                  'S': new TileInfo(10, 'floor', true, false),
+                  '#': new TileInfo(null, 'wall', false, false),
+                  'F': new TileInfo(10, 'floor', true, true),
+                  'C': new TileInfo(-100, 'floor', true, true),
+                  'E': new TileInfo(10, 'floor', true, false)
+  };
+
   List<TerrainTile> map = [];
   Queue<TerrainTile> path;
   TerrainTile startNode;
   TerrainTile goalNode;
+  TerrainMap terrainMap;
   Game() : super('ld28', 'canvas', GRID_SIZE * MAX_WIDTH, GRID_SIZE * MAX_HEIGHT, bodyDefsName: null);
 
 
   void createEntities() {
     addEntity([new Transform(startNode.x, startNode.y), new PathFinder(), new Renderable('player_'), new Directed(), new State()]);
+    addEntity([new Transform(0, 0), new Mouse(), new Renderable('cursor')]);
     map.where((tile) => null != tile).forEach((tile) {
       addEntity([tile]);
     });
@@ -37,9 +36,11 @@ class Game extends GameBase {
 
   List<EntitySystem> getSystems() {
     return [
+            new MouseMovementListeningSystem(canvas, terrainMap),
+            new MouseClickListeningSystem(canvas, terrainMap),
             new PathfindingSystem(new TerrainMap(map, goalNode)),
             new HungerSystem(),
-            new FoodDigestionSystem(),
+            new FoodDigestionSystem(terrainMap),
             new CanvasCleaningSystem(canvas),
             new TerrainRenderingSystem(ctx, spriteSheet),
             new SpriteDirectionSystem(),
@@ -57,7 +58,7 @@ class Game extends GameBase {
       tiles.where((tile) => tile != '\n' && tile != '\r').forEach((tile) {
         var x = map.length % MAX_WIDTH;
         var y = map.length ~/ MAX_WIDTH;
-        var tt = new TerrainTile(x, y, costs[tile], sprites[tile]);
+        var tt = new TerrainTile(x, y, tileInfo[tile]);
         if (tile == 'S') {
           startNode = tt;
         } else if (tile == 'E') {
@@ -71,6 +72,7 @@ class Game extends GameBase {
           addEntity([new Transform(x, y), new Renderable('fairy')]);
         }
       });
+      terrainMap = new TerrainMap(map, goalNode);
     });
   }
 
