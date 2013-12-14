@@ -11,12 +11,13 @@ class Game extends GameBase {
 
 
   void createEntities() {
-    // TODO: implement createEntities
+    addEntity([new Transform(0, 0)]);
   }
 
   List<EntitySystem> getSystems() {
     return [
             new CanvasCleaningSystem(canvas),
+            new RenderingSystem(ctx),
             new FpsRenderingSystem(ctx)
     ];
   }
