@@ -5,8 +5,10 @@ class Transform extends Component {
   Transform(this.x, this.y);
 }
 
-class TerrainTile extends Component {
+class TerrainTile extends Component with Node {
   int x, y;
+  int cost;
   String sprite;
-  TerrainTile(this.x, this.y, this.sprite);
+  TerrainTile(this.x, this.y, this.cost, this.sprite);
+  String toString() => '$x:$y';
 }

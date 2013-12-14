@@ -7,15 +7,15 @@ void main() {
 }
 
 class Game extends GameBase {
+  List<TerrainTile> map = [];
   Game() : super.noAssets('ld28', 'canvas', GRID_SIZE * MAX_WIDTH, GRID_SIZE * MAX_HEIGHT);
 
 
   void createEntities() {
     addEntity([new Transform(0, 0)]);
-    addEntity([new TerrainTile(0, 0, 'green')]);
-    addEntity([new TerrainTile(1, 0, 'blue')]);
-    addEntity([new TerrainTile(0, 1, 'red')]);
-    addEntity([new TerrainTile(1, 1, 'yellow')]);
+    map.forEach((tile) {
+      addEntity([tile]);
+    });
   }
 
   List<EntitySystem> getSystems() {
@@ -28,10 +28,22 @@ class Game extends GameBase {
   }
 
   void onInit() {
-    // TODO: implement onInit
+    for (int y = 0; y < MAX_HEIGHT; y++) {
+      for (int x = 0; x < MAX_WIDTH; x++) {
+        map.add(new TerrainTile(x, y, random.nextInt(10), 'green'));
+      }
+    }
   }
 
   void onInitDone() {
-    // TODO: implement onInitDone
+    var aStar = new AStar(new TerrainMap(map));
+    var start = map[0];
+    var goal = map[MAX_WIDTH * MAX_HEIGHT - 1];
+    aStar.findPath(map[0], map[MAX_WIDTH * MAX_HEIGHT - 1])
+         .then((path) {
+           path.forEach((node) {
+            addEntity([new Transform(node.x, node.y)]);
+           });
+         });
   }
 }

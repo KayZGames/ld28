@@ -1,6 +1,7 @@
 name:  ld28
 description: LD28 - You Only Get One
 dependencies:
+  a_star: any
   browser: any
   canvas_query: any
   dartemis_toolbox: any
