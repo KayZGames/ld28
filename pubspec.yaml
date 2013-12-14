@@ -1,0 +1,8 @@
+name:  ld28
+description: LD28 - You Only Get One
+dependencies:
+  browser: any
+  canvas_query: any
+  dartemis_toolbox: any
+  gamedev_helpers:
+    git: https://github.com/denniskaselow/gamedev_helpers

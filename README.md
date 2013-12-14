@@ -1,4 +1,4 @@
 ld28
 ====
 
-LD28: You Only Got One
+LD28: You Only Get One
