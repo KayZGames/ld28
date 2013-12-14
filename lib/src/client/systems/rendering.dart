@@ -11,7 +11,7 @@ class RenderingSystem extends EntityProcessingSystem {
 
   void processEntity(Entity entity) {
     var t = tm.get(entity);
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = 'blue';
     ctx.fillRect(t.x * GRID_SIZE, t.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
   }
 }

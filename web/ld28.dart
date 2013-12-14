@@ -1,5 +1,7 @@
 library ld28.dart;
 
+import 'dart:async';
+
 import 'package:ld28/client.dart';
 
 void main() {
@@ -7,19 +9,35 @@ void main() {
 }
 
 class Game extends GameBase {
+  var costs = {' ': 10,
+               'S': 10,
+               'E': 10,
+               'F': 10,
+               'C': 10};
+  var sprites = {'_': 'white',
+                 ' ': 'green',
+                 '#': 'black',
+                 'S': 'green',
+                 'F': 'red',
+                 'C': 'orange',
+                 'E': 'red'};
   List<TerrainTile> map = [];
+  Queue<TerrainTile> path;
+  TerrainTile startNode;
+  TerrainTile goalNode;
   Game() : super.noAssets('ld28', 'canvas', GRID_SIZE * MAX_WIDTH, GRID_SIZE * MAX_HEIGHT);
 
 
   void createEntities() {
-    addEntity([new Transform(0, 0)]);
-    map.forEach((tile) {
+    addEntity([new Transform(startNode.x, startNode.y), new PathFinder()]);
+    map.where((tile) => null != tile).forEach((tile) {
       addEntity([tile]);
     });
   }
 
   List<EntitySystem> getSystems() {
     return [
+            new PathfindingSystem(new TerrainMap(map, goalNode)),
             new CanvasCleaningSystem(canvas),
             new TerrainRenderingSystem(ctx),
             new RenderingSystem(ctx),
@@ -27,23 +45,20 @@ class Game extends GameBase {
     ];
   }
 
-  void onInit() {
-    for (int y = 0; y < MAX_HEIGHT; y++) {
-      for (int x = 0; x < MAX_WIDTH; x++) {
-        map.add(new TerrainTile(x, y, random.nextInt(10), 'green'));
-      }
-    }
+  Future onInit() {
+    return HttpRequest.getString('assets/ld28/levels/00.txt').then((content) {
+      var tiles = content.split('');
+      tiles.forEach((tile) {
+        var tt = new TerrainTile(map.length % MAX_WIDTH, map.length ~/ MAX_WIDTH, costs[tile], sprites[tile]);
+        if (tile == 'S') {
+          startNode = tt;
+        } else if (tile == 'E') {
+          goalNode = tt;
+        }
+        map.add(tt);
+      });
+    });
   }
 
-  void onInitDone() {
-    var aStar = new AStar(new TerrainMap(map));
-    var start = map[0];
-    var goal = map[MAX_WIDTH * MAX_HEIGHT - 1];
-    aStar.findPath(map[0], map[MAX_WIDTH * MAX_HEIGHT - 1])
-         .then((path) {
-           path.forEach((node) {
-            addEntity([new Transform(node.x, node.y)]);
-           });
-         });
-  }
+  Future onInitDone() {}
 }

@@ -12,3 +12,5 @@ class TerrainTile extends Component with Node {
   TerrainTile(this.x, this.y, this.cost, this.sprite);
   String toString() => '$x:$y';
 }
+
+class PathFinder extends Component {}

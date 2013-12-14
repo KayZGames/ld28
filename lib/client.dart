@@ -1,6 +1,7 @@
 library client;
 
-import 'dart:html';
+import 'dart:html' hide Node;
+export 'dart:html' hide Node;
 
 import 'package:ld28/shared.dart';
 export 'package:ld28/shared.dart';

@@ -1,8 +1,11 @@
 part of shared;
 
 class TerrainMap implements Graph<TerrainTile> {
+  List<TerrainTile> completeMap;
   List<TerrainTile> map;
-  TerrainMap(this.map);
+  TerrainTile goal;
+  TerrainMap(List<TerrainTile> completeMap, this.goal) : map = completeMap.where((tile) => null != tile).toList(growable: false),
+                                                         completeMap = completeMap;
 
   Iterable<TerrainTile> get allNodes => map;
   num getDistance(TerrainTile a, TerrainTile b) => b.cost;
@@ -10,17 +13,26 @@ class TerrainMap implements Graph<TerrainTile> {
   Iterable<TerrainTile> getNeighboursOf(TerrainTile node) {
     var result = [];
     if (node.y > 0) {
-      result.add(map[(node.y-1) * MAX_WIDTH + node.x]);
+      addNeighbour(result, (node.y-1) * MAX_WIDTH + node.x);
     }
     if (node.x % MAX_WIDTH > 0) {
-      result.add(map[node.y * MAX_WIDTH + node.x - 1]);
+      addNeighbour(result, node.y * MAX_WIDTH + node.x - 1);
     }
     if (node.x % MAX_WIDTH < MAX_WIDTH - 1) {
-      result.add(map[node.y * MAX_WIDTH + node.x + 1]);
+      addNeighbour(result, node.y * MAX_WIDTH + node.x + 1);
     }
     if (node.y < MAX_HEIGHT - 1) {
-      result.add(map[(node.y+1) * MAX_WIDTH + node.x]);
+      addNeighbour(result, (node.y+1) * MAX_WIDTH + node.x);
     }
     return result;
   }
+
+  void addNeighbour(result, index) {
+    var neighbor = completeMap[index];
+    if (null != neighbor) {
+      result.add(neighbor);
+    }
+  }
+
+
 }
