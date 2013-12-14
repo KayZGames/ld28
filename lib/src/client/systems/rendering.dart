@@ -12,6 +12,24 @@ class RenderingSystem extends EntityProcessingSystem {
   void processEntity(Entity entity) {
     var t = tm.get(entity);
     ctx.fillStyle = 'black';
-    ctx.fillRect(t.x, t.y, 10, 10);
+    ctx.fillRect(t.x * GRID_SIZE, t.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+  }
+}
+
+
+class TerrainRenderingSystem extends EntityProcessingSystem {
+  CanvasRenderingContext2D ctx;
+  ComponentMapper<TerrainTile> tm;
+  TerrainRenderingSystem(this.ctx) : super(Aspect.getAspectForAllOf([TerrainTile]));
+
+  void initialize() {
+    tm = new ComponentMapper<TerrainTile>(TerrainTile, world);
+  }
+
+
+  void processEntity(Entity entity) {
+    var t = tm.get(entity);
+    ctx.fillStyle = t.sprite;
+    ctx.fillRect(t.x * GRID_SIZE, t.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
   }
 }
