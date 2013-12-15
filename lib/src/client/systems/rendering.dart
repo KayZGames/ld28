@@ -245,7 +245,7 @@ class GameLostRenderingSystem extends EntityProcessingSystem {
           ..font = '40px Verdana'
           ..fillText(mainText, (width - mainBounds.width) ~/ 2, (height - textHeight) ~/ 2)
           ..font = '16px Verdana'
-          ..wrappedText(text, (width - customBounds.width) ~/ 2, (height - textHeight) ~/ 2 + 20 + customBounds.height, width ~/ 2);
+          ..wrappedText(text, (width - customBounds.width) ~/ 2, (height - textHeight) ~/ 2 + 20 + mainBounds.height, width ~/ 2);
     return screen.canvas;
   }
 
@@ -263,5 +263,74 @@ class GameLostRenderingSystem extends EntityProcessingSystem {
   }
 
   bool checkProcessing() => state.lost;
+}
 
+class LevelCompletedRenderingSystem extends VoidEntitySystem {
+  CanvasRenderingContext2D ctx;
+  CanvasElement winCanvas;
+  int width, height;
+  LevelCompletedRenderingSystem(CanvasElement canvas) : ctx = canvas.context2D,
+                                                  width = canvas.width,
+                                                  height = canvas.height;
+
+  void initialize() {
+    var screen = cq(width, height);
+    initContext(screen.context2D);
+    var mainText = '''LEVEL COMPLETE''';
+    screen.font = '34px Verdana';
+    var bounds = screen.textBoundaries(mainText);
+    screen..fillStyle = '#CCCCCC'
+          ..globalAlpha = 0.75
+          ..roundRect((width - bounds.width) ~/ 2 - 10, (height - bounds.height) ~/ 2 - 10, bounds.width + 20, bounds.height + 20, 15, strokeStyle: 'black', fillStyle: 'darkgreen')
+          ..globalAlpha = 1.0
+          ..font = '34px Verdana'
+          ..fillText(mainText, (width - bounds.width) ~/ 2, (height - bounds.height) ~/ 2);
+    winCanvas = screen.canvas;
+  }
+
+  void processSystem() {
+    ctx.drawImage(winCanvas, 0, 0);
+  }
+
+  bool checkProcessing() => state.won && state.level < state.maxLevel;
+}
+
+class GameWonRenderingSystem extends VoidEntitySystem {
+  CanvasRenderingContext2D ctx;
+  CanvasElement winCanvas;
+  int width, height;
+  GameWonRenderingSystem(CanvasElement canvas) : ctx = canvas.context2D,
+                                                  width = canvas.width,
+                                                  height = canvas.height;
+
+  void initialize() {
+    var screen = cq(width, height);
+    initContext(screen.context2D);
+    var mainText = '''YOU'VE WON''';
+    var text = '''Thanks to your valiant effort your Granny was able to keep her
+loose tooth until Christmas. With joy in your eyes you receive your Christmas
+present and start unpacking it. It's just as you imagined. All you can give your
+Granny are 'Thank you's, hugs and kisses. You finally have what everyone would
+love to have: A beautiful FROZEN NINJA KITTEN.''';
+    screen.font = '40px Verdana';
+    var mainBounds = screen.textBoundaries(mainText);
+    screen.font = '16px Verdana';
+    var customBounds = screen.textBoundaries(text, width ~/ 2);
+    var textHeight = mainBounds.height + customBounds.height + 20;
+    screen..fillStyle = '#CCCCCC'
+          ..globalAlpha = 0.75
+          ..roundRect((width - customBounds.width) ~/ 2 - 10, (height - textHeight) ~/ 2 - 10, customBounds.width + 20, textHeight + 20, 15, strokeStyle: 'black', fillStyle: 'darkgreen')
+          ..globalAlpha = 1.0
+          ..font = '40px Verdana'
+          ..fillText(mainText, (width - mainBounds.width) ~/ 2, (height - textHeight) ~/ 2)
+          ..font = '16px Verdana'
+          ..wrappedText(text, (width - customBounds.width) ~/ 2, (height - textHeight) ~/ 2 + 20 + mainBounds.height, width ~/ 2);
+    winCanvas = screen.canvas;
+  }
+
+  void processSystem() {
+    ctx.drawImage(winCanvas, 0, 0);
+  }
+
+  bool checkProcessing() => state.won && state.level == state.maxLevel;
 }

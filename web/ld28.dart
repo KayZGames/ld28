@@ -29,6 +29,8 @@ class Game extends GameBase {
             new SpriteRenderingSystem(ctx, spriteSheet),
             new StateRenderingSystem(canvas),
             new GameLostRenderingSystem(canvas),
+            new LevelCompletedRenderingSystem(canvas),
+            new GameWonRenderingSystem(canvas),
             new StartScreenRenderingSystem(canvas),
             new FpsRenderingSystem(ctx),
             new GameStateModificationSystem(canvas),

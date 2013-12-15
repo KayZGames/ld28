@@ -24,6 +24,9 @@ class PathfindingSystem extends IntervalEntityProcessingSystem {
       t.y = next.y;
     } else {
       entity.removeComponent(PathFinder);
+      entity.addComponent(new Waiting());
+      state.won = true;
+      entity.changedInWorld();
     }
   }
 }

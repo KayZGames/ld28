@@ -35,10 +35,13 @@ class GameState {
   bool startScreen = true;
   bool grannyWaiting = true;
   bool lost = false;
+  bool won = false;
   int level = 0;
+  int maxLevel = 1;
   void restartLevel() {
     startScreen = false;
     grannyWaiting = true;
     lost = false;
+    won = false;
   }
 }
