@@ -46,8 +46,7 @@ class FoodDispenserSystem extends EntityProcessingSystem {
     tm = new ComponentMapper<Transform>(Transform, world);
     fds = world.getSystem(FoodDigestionSystem);
 
-    canvas.onMouseDown.listen((_) => clicked = true);
-    canvas.onMouseUp.listen((_) => clicked = false);
+    canvas.onMouseUp.listen((_) => clicked = true);
   }
 
   void processEntity(Entity entity) {
@@ -61,7 +60,13 @@ class FoodDispenserSystem extends EntityProcessingSystem {
       food.addToWorld();
       fds.foodEntities[index] = food;
       map.occupy(index, -100);
+    } else if (fds.foodEntities[index] != null) {
+      var food = fds.foodEntities[index];
+      fds.foodEntities[index] = null;
+      food.deleteFromWorld();
+      map.free(index);
     }
+    clicked = false;
   }
 
   bool checkProcessing() => !state.startScreen && state.grannyWaiting && clicked;

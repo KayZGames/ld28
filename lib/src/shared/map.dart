@@ -61,6 +61,7 @@ class TerrainMap implements Graph<TerrainTile> {
 
   void free(int index) {
     completeMap[index].occupied = false;
+    completeMap[index].cost = 10;
   }
 
 }
