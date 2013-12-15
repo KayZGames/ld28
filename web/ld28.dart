@@ -33,7 +33,6 @@ class Game extends GameBase {
             new LevelCompletedRenderingSystem(canvas),
             new GameWonRenderingSystem(canvas),
             new StartScreenRenderingSystem(canvas, spriteSheet),
-            new FpsRenderingSystem(ctx),
             new GameStateModificationSystem(canvas),
             new LevelLoadingSystem(),
             new SoundSystem(helper.audioHelper)
