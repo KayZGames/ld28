@@ -107,3 +107,23 @@ class StateObservationSystem extends EntityProcessingSystem {
     }
   }
 }
+
+class FairyEncounterSystem extends EntityProcessingSystem {
+  ComponentMapper<Transform> tm;
+  ComponentMapper<State> sm;
+  List<bool> fairyEntities;
+  FairyEncounterSystem() : super(Aspect.getAspectForAllOf([State, Transform]));
+
+  void initialize() {
+    tm = new ComponentMapper<Transform>(Transform, world);
+    sm = new ComponentMapper<State>(State, world);
+  }
+
+  void processEntity(Entity entity) {
+    var t = tm.get(entity);
+    var index = indexInGrid(t.x, t.y);
+    if (fairyEntities[index]) {
+      sm.get(entity).looseness = 100.0;
+    }
+  }
+}

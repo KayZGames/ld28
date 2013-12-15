@@ -6,12 +6,14 @@ class LevelLoadingSystem extends VoidEntitySystem {
   FoodDispenserSystem dispenserSystem;
   PathfindingSystem pathfindingSystem;
   FoodDigestionSystem digestSystem;
+  FairyEncounterSystem fairySystem;
 
   void initialize() {
     mouseListening = world.getSystem(MouseMovementListeningSystem);
     dispenserSystem = world.getSystem(FoodDispenserSystem);
     pathfindingSystem = world.getSystem(PathfindingSystem);
     digestSystem = world.getSystem(FoodDigestionSystem);
+    fairySystem = world.getSystem(FairyEncounterSystem);
   }
 
   void processSystem() {
@@ -22,6 +24,7 @@ class LevelLoadingSystem extends VoidEntitySystem {
     TerrainMap terrainMap;
     HttpRequest.getString('assets/ld28/levels/0${state.level}.txt').then((content) {
       var tiles = content.split('');
+      var fairyEntities = new List<bool>.filled(MAX_WIDTH * MAX_HEIGHT, false);
       tiles.where((tile) => tile != '\n' && tile != '\r').forEach((tile) {
         var x = map.length % MAX_WIDTH;
         var y = map.length ~/ MAX_WIDTH;
@@ -34,6 +37,7 @@ class LevelLoadingSystem extends VoidEntitySystem {
         map.add(tt);
         if (tile == 'F') {
           addEntity([new Transform(x, y), new Renderable('fairy')]);
+          fairyEntities[indexInGrid(x, y)] = true;
         }
       });
       terrainMap = new TerrainMap(map, goalNode);
@@ -48,6 +52,7 @@ class LevelLoadingSystem extends VoidEntitySystem {
       pathfindingSystem.path = null;
       digestSystem.map = terrainMap;
       digestSystem.initFoodMap();
+      fairySystem.fairyEntities = fairyEntities;
       state.restartLevel();
     });
     loadLevel = false;

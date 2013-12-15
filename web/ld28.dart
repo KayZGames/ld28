@@ -21,6 +21,7 @@ class Game extends GameBase {
             new PathfindingSystem(),
             new HungerSystem(),
             new FoodDigestionSystem(),
+            new FairyEncounterSystem(),
             new StateObservationSystem(),
             new CanvasCleaningSystem(canvas),
             new TerrainRenderingSystem(ctx, spriteSheet),
