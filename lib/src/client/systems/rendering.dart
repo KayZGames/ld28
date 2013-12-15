@@ -179,8 +179,8 @@ class ButtonRenderingSystem extends VoidEntitySystem {
   CanvasRenderingContext2D ctx;
   CanvasQuery buttonCanvas;
   int width, height;
-  String startText = 'Go, Granny, go!';
-  Button startButton, restartButton, nextLevelButton;
+  String startText = 'Go Granny, go!';
+  Button startButton, restartButton, nextLevelButton, carrotsButton, cookiesButton, chipsButton;
   ButtonRenderingSystem(CanvasElement canvas) : ctx = canvas.context2D,
                                                 width = canvas.width,
                                                 height = canvas.height;
@@ -188,9 +188,13 @@ class ButtonRenderingSystem extends VoidEntitySystem {
   void initialize() {
     buttonCanvas = cq(width, height);
     initContext(buttonCanvas.context2D);
-    startButton = new Button(startText, 50, 50, buttonCanvas.textBoundaries(startText), () => state.grannyWaiting);
-    restartButton = new Button('Restart Level', 50, 100, buttonCanvas.textBoundaries('Restart Level'), () => true);
-    nextLevelButton = new Button('Next Level', 50, 150, buttonCanvas.textBoundaries('Next Level'), () => state.won && state.level < state.maxLevel);
+    var startBounds = buttonCanvas.textBoundaries(startText);
+    startButton = new Button(startText, (width - startBounds.width) ~/ 2, height - 100, startBounds, () => state.grannyWaiting);
+    restartButton = new Button('Restart Level', 50, height - 100, buttonCanvas.textBoundaries('Restart Level'), () => true);
+    nextLevelButton = new Button('Next Level', width - 200, height - 100, buttonCanvas.textBoundaries('Next Level'), () => state.won && state.level < state.maxLevel);
+    carrotsButton = new Button('Carrots', 50, 45, buttonCanvas.textBoundaries('Carrots'), () => state.grannyWaiting);
+    cookiesButton = new Button('Cookies', 200, 45, buttonCanvas.textBoundaries('Cookies'), () => state.grannyWaiting);
+    chipsButton = new Button('Chips', 350, 45, buttonCanvas.textBoundaries('Chips'), () => state.grannyWaiting);
   }
 
   void begin() {
@@ -201,6 +205,9 @@ class ButtonRenderingSystem extends VoidEntitySystem {
     drawButton(startButton);
     drawButton(restartButton);
     drawButton(nextLevelButton);
+    drawButton(carrotsButton);
+    drawButton(cookiesButton);
+    drawButton(chipsButton);
     ctx.drawImage(buttonCanvas.canvas, 0, 0);
   }
 
