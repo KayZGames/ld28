@@ -58,16 +58,17 @@ class MouseClickListeningSystem extends EntityProcessingSystem {
     }
   }
 
-  bool checkProcessing() => !state.startScreen && clicked;
+  bool checkProcessing() => !state.startScreen && state.grannyWaiting && clicked;
 }
 
 class GameStateModificationSystem extends EntityProcessingSystem {
   CanvasElement canvas;
-  bool waiting = true;
   GameStateModificationSystem(this.canvas) : super(Aspect.getAspectForAllOf([Waiting]));
 
   void initialize() {
-    canvas.onMouseUp.listen((_) => waiting = state.startScreen);
+    canvas.onMouseUp.listen((_) {
+      state.grannyWaiting = state.startScreen;
+    });
   }
 
   void processEntity(Entity entity) {
@@ -75,5 +76,5 @@ class GameStateModificationSystem extends EntityProcessingSystem {
     entity.changedInWorld();
   }
 
-  bool checkProcessing() => !waiting;
+  bool checkProcessing() => !state.grannyWaiting;
 }
