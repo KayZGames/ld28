@@ -190,9 +190,9 @@ class ButtonRenderingSystem extends VoidEntitySystem {
     buttonCanvas = cq(width, height);
     initContext(buttonCanvas.context2D);
     var startBounds = buttonCanvas.textBoundaries(startText);
-    startButton = new Button(startText, (width - startBounds.width) ~/ 2, height - 100, startBounds, () => state.grannyWaiting && !state.startScreen);
-    restartButton = new Button('Restart Level', 50, height - 100, buttonCanvas.textBoundaries('Restart Level'), () => true);
-    nextLevelButton = new Button('Next Level', width - 200, height - 100, buttonCanvas.textBoundaries('Next Level'), () => state.won && state.level < state.maxLevel);
+    startButton = new Button(startText, (width - startBounds.width) ~/ 2, height - 50, startBounds, () => state.grannyWaiting && !state.startScreen);
+    restartButton = new Button('Restart Level', 50, height - 50, buttonCanvas.textBoundaries('Restart Level'), () => true);
+    nextLevelButton = new Button('Next Level', width - 200, height - 50, buttonCanvas.textBoundaries('Next Level'), () => state.won && state.level < state.maxLevel);
     carrotButton = new Button('Carrots', 50, 45, buttonCanvas.textBoundaries('Carrots'), () => state.grannyWaiting);
     cookiesButton = new Button('Cookies', 200, 45, buttonCanvas.textBoundaries('Cookies'), () => state.grannyWaiting);
     chipsButton = new Button('Chips', 350, 45, buttonCanvas.textBoundaries('Chips'), () => state.grannyWaiting);
