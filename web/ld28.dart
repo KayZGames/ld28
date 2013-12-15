@@ -36,19 +36,20 @@ class Game extends GameBase {
 
   List<EntitySystem> getSystems() {
     return [
-            new GameStateModificationSystem(canvas),
             new MouseMovementListeningSystem(canvas, terrainMap),
-            new MouseClickListeningSystem(canvas, terrainMap),
+            new FoodDispenserSystem(canvas, terrainMap),
             new PathfindingSystem(new TerrainMap(map, goalNode)),
             new HungerSystem(),
             new FoodDigestionSystem(terrainMap),
             new CanvasCleaningSystem(canvas),
             new TerrainRenderingSystem(ctx, spriteSheet),
+            new ButtonRenderingSystem(canvas),
             new SpriteDirectionSystem(),
             new SpriteRenderingSystem(ctx, spriteSheet),
             new StateRenderingSystem(canvas),
             new StartScreenRenderingSystem(canvas, startScreenCq),
-            new FpsRenderingSystem(ctx)
+            new FpsRenderingSystem(ctx),
+            new GameStateModificationSystem(canvas),
     ];
   }
 

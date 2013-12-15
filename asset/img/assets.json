@@ -16,6 +16,14 @@
 	"spriteSourceSize": {"x":1,"y":1,"w":18,"h":18},
 	"sourceSize": {"w":20,"h":20}
 },
+"cursor_hidden.png":
+{
+	"frame": {"x":60,"y":0,"w":1,"h":1},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":0,"y":0,"w":1,"h":1},
+	"sourceSize": {"w":20,"h":20}
+},
 "fairy.png":
 {
 	"frame": {"x":20,"y":40,"w":20,"h":20},
@@ -87,6 +95,6 @@
 	"format": "RGBA8888",
 	"size": {"w":64,"h":128},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:eb0427d919895421d6364a2e88d8a6a1:6e9d7ddb62bcda32a6c7dcf144ff933c:a759b6bbc8381ac9c472b28f589ad0d6$"
+	"smartupdate": "$TexturePacker:SmartUpdate:b7708497ade2dceb0073c26b895497e6:1eb5f406518c69c8a7c1870309dc603b:a759b6bbc8381ac9c472b28f589ad0d6$"
 }
 }

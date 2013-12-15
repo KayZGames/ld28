@@ -141,3 +141,47 @@ class StartScreenRenderingSystem extends VoidEntitySystem {
     ctx.drawImage(startScreen.canvas, 0, 0);
   }
 }
+
+class ButtonRenderingSystem extends VoidEntitySystem {
+  CanvasRenderingContext2D ctx;
+  CanvasQuery buttonCanvas;
+  int width, height;
+  String startText = 'Go, Granny, go!';
+  Button startButton;
+  ButtonRenderingSystem(CanvasElement canvas) : ctx = canvas.context2D,
+                                                width = canvas.width,
+                                                height = canvas.height;
+
+  void initialize() {
+    buttonCanvas = cq(width, height);
+    initContext(buttonCanvas.context2D);
+    startButton = new Button(startText, 50, 50, buttonCanvas.textBoundaries(startText));
+  }
+
+  void processSystem() {
+    drawButton(startButton);
+    ctx.drawImage(buttonCanvas.canvas, 0, 0);
+  }
+
+  void drawButton(Button button) {
+    buttonCanvas..roundRect(button.pos.left, button.pos.top, button.pos.width, button.pos.height, button.radius, strokeStyle: 'black', fillStyle: button.color)
+                ..fillStyle = button.textColor
+                ..fillText(startText, button.textPos.left, button.textPos.top);
+  }
+}
+
+class Button {
+  String label;
+  String defaultColor, highlightColor;
+  String textColor;
+  Rectangle pos;
+  Rectangle textPos;
+  bool highlight = false;
+  int radius = 15;
+  Button(this.label, int x, int y, Rectangle<int> textBounds, {this.textColor: '#8090C0', this.defaultColor: '#DDDDDD', this.highlightColor: '#EEEEEE'}) {
+    textPos = new Rectangle(x, y, textBounds.width, textBounds.height);
+    pos = new Rectangle(textPos.left - 5, textPos.top - 5, textPos.width + 10, textPos.height + 10);
+  }
+  Button.dummy();
+  String get color => highlight ?  highlightColor : defaultColor;
+}

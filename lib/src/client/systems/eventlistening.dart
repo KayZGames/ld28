@@ -2,13 +2,15 @@ part of client;
 
 class MouseMovementListeningSystem extends EntityProcessingSystem {
   ComponentMapper<Transform> tm;
+  ComponentMapper<Renderable> rm;
   TerrainMap map;
   CanvasElement canvas;
   int x = 0, y = 0;
-  MouseMovementListeningSystem(this.canvas, this.map) : super(Aspect.getAspectForAllOf([Mouse, Transform]));
+  MouseMovementListeningSystem(this.canvas, this.map) : super(Aspect.getAspectForAllOf([Mouse, Transform, Renderable]));
 
   void initialize() {
     tm = new ComponentMapper<Transform>(Transform, world);
+    rm = new ComponentMapper<Renderable>(Renderable, world);
 
     canvas.onMouseMove.listen((data) {
       x = (GRID_SIZE~/2 + data.offset.x) ~/ GRID_SIZE;
@@ -18,23 +20,27 @@ class MouseMovementListeningSystem extends EntityProcessingSystem {
 
   void processEntity(Entity entity) {
     var t = tm.get(entity);
+    var r = rm.get(entity);
     var gx = min(max(0, x), MAX_WIDTH-  1);
     var gy = min(max(0, y), MAX_HEIGHT - 1);
     var index = indexInGrid(gx, gy);
+    t.x = gx;
+    t.y = gy;
     if (map.occupiable(index)) {
-      t.x = gx;
-      t.y = gy;
+      r.subspriteName = '';
+    } else {
+      r.subspriteName= '_hidden';
     }
   }
 }
 
-class MouseClickListeningSystem extends EntityProcessingSystem {
+class FoodDispenserSystem extends EntityProcessingSystem {
   ComponentMapper<Transform> tm;
   CanvasElement canvas;
   bool clicked = false;
   FoodDigestionSystem fds;
   TerrainMap map;
-  MouseClickListeningSystem(this.canvas, this.map) : super(Aspect.getAspectForAllOf([Mouse, Transform]));
+  FoodDispenserSystem(this.canvas, this.map) : super(Aspect.getAspectForAllOf([Mouse, Transform]));
 
   void initialize() {
     tm = new ComponentMapper<Transform>(Transform, world);
@@ -62,13 +68,42 @@ class MouseClickListeningSystem extends EntityProcessingSystem {
 }
 
 class GameStateModificationSystem extends EntityProcessingSystem {
+  static const START = 1;
   CanvasElement canvas;
+  ButtonRenderingSystem brs;
+  Map<int, Button> buttons = new Map<int, Button>();
+  int highlightId = 0;
   GameStateModificationSystem(this.canvas) : super(Aspect.getAspectForAllOf([Waiting]));
 
   void initialize() {
-    canvas.onMouseUp.listen((_) {
-      state.grannyWaiting = state.startScreen;
+    brs = world.getSystem(ButtonRenderingSystem);
+    buttons[0] = new Button.dummy();
+    CanvasQuery buttonCanvas = cq(canvas.width, canvas.height);
+    addButton(buttonCanvas, brs.startButton, START);
+
+    canvas.onMouseMove.listen((event) {
+      var data = buttonCanvas.getImageData(event.offset.x, event.offset.y, 1, 1).data;
+      var id = data[0];
+      if (id != 0 && data[3] == 255 && buttons.containsKey(id)) {
+        buttons[highlightId].highlight = false;
+        buttons[id].highlight = true;
+        highlightId = id;
+      } else {
+        buttons[highlightId].highlight = false;
+        highlightId = 0;
+      }
     });
+
+    canvas.onMouseUp.listen((_) {
+      if (highlightId == START) {
+        state.grannyWaiting = false;
+      }
+    });
+  }
+
+  void addButton(CanvasQuery buttonCanvas, Button button, int id) {
+    buttonCanvas..roundRect(button.pos.left, button.pos.top, button.pos.width, button.pos.height, button.radius, fillStyle: '0${id}0000');
+    buttons[id] = button;
   }
 
   void processEntity(Entity entity) {
