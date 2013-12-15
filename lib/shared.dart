@@ -23,8 +23,6 @@ const int GRID_SIZE = 20;
 const int MAX_WIDTH = 40;
 const int MAX_HEIGHT = 30;
 
-const String GROUP_FOOD = 'food';
-
 Random random = new Random();
 
 int indexInGrid(int x, int y) => x + y * MAX_WIDTH;
@@ -38,10 +36,22 @@ class GameState {
   bool won = false;
   int level = 0;
   int maxLevel = 1;
+  String selectedFood = 'carrot';
   void restartLevel() {
-    startScreen = false;
     grannyWaiting = true;
     lost = false;
     won = false;
   }
+}
+
+var foodTypes = { 'carrot': new FoodInfo('carrot', 20.0, 50.0, -10.0, 1000.0),
+                  'cookies': new FoodInfo('cookies', 40.0, 25.0, 25.0, 1000.0),
+                  'chips': new FoodInfo('chips', 10.0, 10.0, 10.0, 1000.0)
+};
+
+class FoodInfo {
+  double filling, hardness, sweetness;
+  double timeToEat;
+  String spriteName;
+  FoodInfo(this.spriteName, this.filling, this.hardness, this.sweetness, this.timeToEat);
 }

@@ -60,9 +60,9 @@ class FoodDigestionSystem extends EntityProcessingSystem {
       var s = sm.get(entity);
       var f = fm.get(food);
       var mult = world.delta/f.timeToEat;
-      s.hunger = max(0.0, s.hunger - f.filling * mult);
-      s.looseness = min(100.0, s.looseness + f.hardness * mult);
-      s.caries = min(100.0, s.caries + f.sweetness * mult);
+      s.hunger = max(0.0, min(100.0, s.hunger - f.filling * mult));
+      s.looseness = max(0.0, min(100.0, s.looseness + f.hardness * mult));
+      s.caries = max(0.0, min(100.0, s.caries + f.sweetness * mult));
       f.timeLeftToEat -= world.delta;
       var eating = em.getSafe(entity);
       if (null == eating) {

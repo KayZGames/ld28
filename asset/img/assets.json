@@ -8,6 +8,22 @@
 	"spriteSourceSize": {"x":0,"y":4,"w":20,"h":10},
 	"sourceSize": {"w":20,"h":20}
 },
+"chips.png":
+{
+	"frame": {"x":0,"y":60,"w":18,"h":16},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":2,"w":18,"h":16},
+	"sourceSize": {"w":20,"h":20}
+},
+"cookies.png":
+{
+	"frame": {"x":18,"y":60,"w":18,"h":8},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":1,"y":6,"w":18,"h":8},
+	"sourceSize": {"w":20,"h":20}
+},
 "cursor.png":
 {
 	"frame": {"x":40,"y":50,"w":18,"h":18},
@@ -95,6 +111,6 @@
 	"format": "RGBA8888",
 	"size": {"w":64,"h":128},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:b7708497ade2dceb0073c26b895497e6:1eb5f406518c69c8a7c1870309dc603b:a759b6bbc8381ac9c472b28f589ad0d6$"
+	"smartupdate": "$TexturePacker:SmartUpdate:a1537242ed1504b60749e90ae7d2b008:c5a5ae652785c330a96854db2a1e16e1:a759b6bbc8381ac9c472b28f589ad0d6$"
 }
 }

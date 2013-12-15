@@ -46,7 +46,8 @@ class FoodDispenserSystem extends EntityProcessingSystem {
     tm = new ComponentMapper<Transform>(Transform, world);
     fds = world.getSystem(FoodDigestionSystem);
 
-    canvas.onMouseUp.listen((_) => clicked = true);
+    canvas.onMouseDown.listen((_) => clicked = true);
+    canvas.onMouseUp.listen((_) => clicked = false);
   }
 
   void processEntity(Entity entity) {
@@ -54,9 +55,10 @@ class FoodDispenserSystem extends EntityProcessingSystem {
     var index = indexInGrid(t.x, t.y);
     if (fds.foodEntities[index] == null && map.acceptsOccupant(index)) {
       var food = world.createEntity();
+      FoodInfo foodInfo = foodTypes[state.selectedFood];
       food.addComponent(new Transform(t.x, t.y));
-      food.addComponent(new Food(filling: 20.0, hardness: 50.0, sweetness: 5.0));
-      food.addComponent(new Renderable('carrot'));
+      food.addComponent(new Food(filling: foodInfo.filling, hardness: foodInfo.hardness, sweetness: foodInfo.sweetness));
+      food.addComponent(new Renderable(foodInfo.spriteName));
       food.addToWorld();
       fds.foodEntities[index] = food;
       map.occupy(index, -100);
@@ -76,6 +78,9 @@ class GameStateModificationSystem extends EntityProcessingSystem {
   static const START = 1;
   static const RESTART = 2;
   static const NEXT_LEVEL = 3;
+  static const CARROT = 4;
+  static const COOKIES = 5;
+  static const CHIPS = 6;
   CanvasElement canvas;
   ButtonRenderingSystem brs;
   LevelLoadingSystem lls;
@@ -91,6 +96,9 @@ class GameStateModificationSystem extends EntityProcessingSystem {
     addButton(buttonCanvas, brs.startButton, START);
     addButton(buttonCanvas, brs.restartButton, RESTART);
     addButton(buttonCanvas, brs.nextLevelButton, NEXT_LEVEL);
+    addButton(buttonCanvas, brs.carrotButton, CARROT);
+    addButton(buttonCanvas, brs.cookiesButton, COOKIES);
+    addButton(buttonCanvas, brs.chipsButton, CHIPS);
 
     canvas.onMouseMove.listen((event) {
       var data = buttonCanvas.getImageData(event.offset.x, event.offset.y, 1, 1).data;
@@ -118,6 +126,15 @@ class GameStateModificationSystem extends EntityProcessingSystem {
             state.level = min(state.maxLevel, state.level + 1);
             lls.loadLevel = true;
             break;
+          case CARROT:
+            state.selectedFood = 'carrot';
+            break;
+          case COOKIES:
+            state.selectedFood = 'cookies';
+            break;
+          case CHIPS:
+            state.selectedFood = 'chips';
+            break;
         }
       }
     });
@@ -133,5 +150,5 @@ class GameStateModificationSystem extends EntityProcessingSystem {
     entity.changedInWorld();
   }
 
-  bool checkProcessing() => !state.grannyWaiting && !state.lost && !state.won;
+  bool checkProcessing() => !state.startScreen && !state.grannyWaiting && !state.lost && !state.won;
 }

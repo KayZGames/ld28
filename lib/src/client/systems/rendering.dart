@@ -141,7 +141,7 @@ her hands on such an old and precious tooth.''';
                ..wrappedText(paragraph2, 70, 70 + p1Height + 10, canvas.width - 140)
                ..wrappedText(paragraph3, 70, 70 + p1Height + 10 + p2Height + 10, canvas.width - 140);
     buttonBounds = startScreen.textBoundaries(startButtonText);
-    startButtonPos = new Rectangle((width - buttonBounds.width) ~/ 2 - 10, height - buttonBounds.height - 100 - 10, buttonBounds.width + 20, buttonBounds.height + 20);
+    startButtonPos = new Rectangle((width - buttonBounds.width) ~/ 2 - 10, height - buttonBounds.height - 200 - 10, buttonBounds.width + 20, buttonBounds.height + 20);
 
     CanvasQuery hiddenButton = cq(width, height);
     hiddenButton.roundRect(startButtonPos.left, startButtonPos.top, startButtonPos.width, startButtonPos.height, 15, fillStyle: '#010000');
@@ -156,11 +156,10 @@ her hands on such an old and precious tooth.''';
         highlightButton = false;
       }
     });
-    mouseClickSubscription = canvas.onClick.listen((_) {
+    mouseClickSubscription = canvas.onMouseUp.listen((event) {
       if (highlightButton) {
         mouseClickSubscription.cancel();
         mouseMoveSubscription.cancel();
-        world.deleteSystem(this);
         state.startScreen = false;
       }
     });
@@ -170,9 +169,11 @@ her hands on such an old and precious tooth.''';
     startScreen..globalAlpha = 0.8
                ..roundRect(startButtonPos.left, startButtonPos.top, startButtonPos.width, startButtonPos.height, 15, strokeStyle: 'black', fillStyle: highlightButton ? '#000088' : '#000044')
                ..globalAlpha = 1.0
-               ..fillText(startButtonText, (width - buttonBounds.width) ~/ 2, height - buttonBounds.height - 100);
+               ..fillText(startButtonText, (width - buttonBounds.width) ~/ 2, height - buttonBounds.height - 200);
     ctx.drawImage(startScreen.canvas, 0, 0);
   }
+
+  bool checkProcessing() => state.startScreen;
 }
 
 class ButtonRenderingSystem extends VoidEntitySystem {
@@ -180,7 +181,7 @@ class ButtonRenderingSystem extends VoidEntitySystem {
   CanvasQuery buttonCanvas;
   int width, height;
   String startText = 'Go Granny, go!';
-  Button startButton, restartButton, nextLevelButton, carrotsButton, cookiesButton, chipsButton;
+  Button startButton, restartButton, nextLevelButton, carrotButton, cookiesButton, chipsButton;
   ButtonRenderingSystem(CanvasElement canvas) : ctx = canvas.context2D,
                                                 width = canvas.width,
                                                 height = canvas.height;
@@ -189,10 +190,10 @@ class ButtonRenderingSystem extends VoidEntitySystem {
     buttonCanvas = cq(width, height);
     initContext(buttonCanvas.context2D);
     var startBounds = buttonCanvas.textBoundaries(startText);
-    startButton = new Button(startText, (width - startBounds.width) ~/ 2, height - 100, startBounds, () => state.grannyWaiting);
+    startButton = new Button(startText, (width - startBounds.width) ~/ 2, height - 100, startBounds, () => state.grannyWaiting && !state.startScreen);
     restartButton = new Button('Restart Level', 50, height - 100, buttonCanvas.textBoundaries('Restart Level'), () => true);
     nextLevelButton = new Button('Next Level', width - 200, height - 100, buttonCanvas.textBoundaries('Next Level'), () => state.won && state.level < state.maxLevel);
-    carrotsButton = new Button('Carrots', 50, 45, buttonCanvas.textBoundaries('Carrots'), () => state.grannyWaiting);
+    carrotButton = new Button('Carrots', 50, 45, buttonCanvas.textBoundaries('Carrots'), () => state.grannyWaiting);
     cookiesButton = new Button('Cookies', 200, 45, buttonCanvas.textBoundaries('Cookies'), () => state.grannyWaiting);
     chipsButton = new Button('Chips', 350, 45, buttonCanvas.textBoundaries('Chips'), () => state.grannyWaiting);
   }
@@ -205,7 +206,7 @@ class ButtonRenderingSystem extends VoidEntitySystem {
     drawButton(startButton);
     drawButton(restartButton);
     drawButton(nextLevelButton);
-    drawButton(carrotsButton);
+    drawButton(carrotButton);
     drawButton(cookiesButton);
     drawButton(chipsButton);
     ctx.drawImage(buttonCanvas.canvas, 0, 0);
