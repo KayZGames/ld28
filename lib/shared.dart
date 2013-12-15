@@ -35,7 +35,7 @@ class GameState {
   bool lost = false;
   bool won = false;
   int level = 0;
-  int maxLevel = 2;
+  int maxLevel = 4;
   String selectedFood = 'carrot';
   void restartLevel() {
     grannyWaiting = true;
