@@ -61,7 +61,7 @@ class FoodDispenserSystem extends EntityProcessingSystem {
       food.addComponent(new Renderable(foodInfo.spriteName));
       food.addToWorld();
       fds.foodEntities[index] = food;
-      map.occupy(index, -100);
+      map.occupy(index, -10000);
     } else if (fds.foodEntities[index] != null) {
       var food = fds.foodEntities[index];
       fds.foodEntities[index] = null;

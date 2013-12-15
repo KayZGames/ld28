@@ -26,7 +26,7 @@ class HungerSystem extends IntervalEntityProcessingSystem {
 
   void processEntity(Entity entity) {
     var s = sm.get(entity);
-    s.hunger = min(100.0, s.hunger + 1);
+    s.hunger = min(100.0, s.hunger + 2);
   }
 }
 
