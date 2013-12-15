@@ -188,9 +188,13 @@ class ButtonRenderingSystem extends VoidEntitySystem {
   void initialize() {
     buttonCanvas = cq(width, height);
     initContext(buttonCanvas.context2D);
-    startButton = new Button(startText, 50, 50, buttonCanvas.textBoundaries(startText));
-    restartButton = new Button('Restart Level', 50, 100, buttonCanvas.textBoundaries('Restart Level'));
-    nextLevelButton = new Button('Next Level', 50, 150, buttonCanvas.textBoundaries('Next Level'));
+    startButton = new Button(startText, 50, 50, buttonCanvas.textBoundaries(startText), () => state.grannyWaiting);
+    restartButton = new Button('Restart Level', 50, 100, buttonCanvas.textBoundaries('Restart Level'), () => true);
+    nextLevelButton = new Button('Next Level', 50, 150, buttonCanvas.textBoundaries('Next Level'), () => state.won && state.level < state.maxLevel);
+  }
+
+  void begin() {
+    buttonCanvas.clearRect(0, 0, width, height);
   }
 
   void processSystem() {
@@ -201,9 +205,11 @@ class ButtonRenderingSystem extends VoidEntitySystem {
   }
 
   void drawButton(Button button) {
-    buttonCanvas..roundRect(button.pos.left, button.pos.top, button.pos.width, button.pos.height, button.radius, strokeStyle: 'black', fillStyle: button.color)
-                ..fillStyle = button.textColor
-                ..fillText(button.label, button.textPos.left, button.textPos.top);
+    if (button.show) {
+      buttonCanvas..roundRect(button.pos.left, button.pos.top, button.pos.width, button.pos.height, button.radius, strokeStyle: 'black', fillStyle: button.color)
+                  ..fillStyle = button.textColor
+                  ..fillText(button.label, button.textPos.left, button.textPos.top);
+    }
   }
 }
 

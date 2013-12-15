@@ -101,7 +101,7 @@ class GameStateModificationSystem extends EntityProcessingSystem {
     });
 
     canvas.onMouseUp.listen((_) {
-      if (!state.startScreen) {
+      if (!state.startScreen && buttons[highlightId] != null && buttons[highlightId].show) {
         switch (highlightId) {
           case START:
             state.grannyWaiting = false;

@@ -39,11 +39,15 @@ class Button {
   Rectangle pos;
   Rectangle textPos;
   bool highlight = false;
+  ShowCondition showCondition = () => false;
   int radius = 15;
-  Button(this.label, int x, int y, Rectangle<int> textBounds, {this.textColor: '#8090C0', this.defaultColor: '#DDDDDD', this.highlightColor: '#EEEEEE'}) {
+  Button(this.label, int x, int y, Rectangle<int> textBounds, this.showCondition, {this.textColor: '#8090C0', this.defaultColor: '#DDDDDD', this.highlightColor: '#EEEEEE'}) {
     textPos = new Rectangle(x, y, textBounds.width, textBounds.height);
     pos = new Rectangle(textPos.left - 5, textPos.top - 5, textPos.width + 10, textPos.height + 10);
   }
   Button.dummy();
   String get color => highlight ?  highlightColor : defaultColor;
+  bool get show => showCondition();
 }
+
+typedef bool ShowCondition();
