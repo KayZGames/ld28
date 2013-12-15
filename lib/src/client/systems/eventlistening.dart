@@ -107,12 +107,10 @@ class GameStateModificationSystem extends EntityProcessingSystem {
             state.grannyWaiting = false;
             break;
           case RESTART:
-            state.restartLevel();
             lls.loadLevel = true;
             break;
           case NEXT_LEVEL:
             state.level = min(1, state.level + 1);
-            state.restartLevel();
             lls.loadLevel = true;
             break;
         }
@@ -130,5 +128,5 @@ class GameStateModificationSystem extends EntityProcessingSystem {
     entity.changedInWorld();
   }
 
-  bool checkProcessing() => !state.grannyWaiting;
+  bool checkProcessing() => !state.grannyWaiting && !state.lost;
 }

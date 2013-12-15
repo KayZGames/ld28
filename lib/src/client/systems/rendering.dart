@@ -207,18 +207,61 @@ class ButtonRenderingSystem extends VoidEntitySystem {
   }
 }
 
-class Button {
-  String label;
-  String defaultColor, highlightColor;
-  String textColor;
-  Rectangle pos;
-  Rectangle textPos;
-  bool highlight = false;
-  int radius = 15;
-  Button(this.label, int x, int y, Rectangle<int> textBounds, {this.textColor: '#8090C0', this.defaultColor: '#DDDDDD', this.highlightColor: '#EEEEEE'}) {
-    textPos = new Rectangle(x, y, textBounds.width, textBounds.height);
-    pos = new Rectangle(textPos.left - 5, textPos.top - 5, textPos.width + 10, textPos.height + 10);
+class GameLostRenderingSystem extends EntityProcessingSystem {
+  ComponentMapper<State> sm;
+  CanvasRenderingContext2D ctx;
+  int width, height;
+  CanvasElement lostHunger, lostLooseness, lostCaries;
+  GameLostRenderingSystem(CanvasElement canvas) : ctx = canvas.context2D,
+                                                  width = canvas.width,
+                                                  height = canvas.height,
+                                                  super(Aspect.getAspectForAllOf([State]));
+
+  void initialize() {
+    sm = new ComponentMapper<State>(State, world);
+
+    var hungerText = '''Your Granny is too hungry to move and can't give you your present.''';
+    var loosenessText = '''Your Granny has lost her only tooth and is now too embarrassed to see you.''';
+    var cariesText = '''Your Granny's tooth hurts too much and she can't go on.''';
+
+    lostHunger = createLosingScreen(hungerText);
+    lostLooseness = createLosingScreen(loosenessText);
+    lostCaries = createLosingScreen(cariesText);
   }
-  Button.dummy();
-  String get color => highlight ?  highlightColor : defaultColor;
+
+  CanvasElement createLosingScreen(String text) {
+    var mainText = '''YOU LOST''';
+    var screen = cq(width, height);
+    initContext(screen.context2D);
+    screen.font = '40px Verdana';
+    var mainBounds = screen.textBoundaries(mainText);
+    screen.font = '16px Verdana';
+    var customBounds = screen.textBoundaries(text, width ~/ 2);
+    var textHeight = mainBounds.height + customBounds.height + 20;
+    screen..fillStyle = '#CCCCCC'
+          ..globalAlpha = 0.75
+          ..roundRect((width - customBounds.width) ~/ 2 - 10, (height - textHeight) ~/ 2 - 10, customBounds.width + 20, textHeight + 20, 15, strokeStyle: 'black', fillStyle: 'darkred')
+          ..globalAlpha = 1.0
+          ..font = '40px Verdana'
+          ..fillText(mainText, (width - mainBounds.width) ~/ 2, (height - textHeight) ~/ 2)
+          ..font = '16px Verdana'
+          ..wrappedText(text, (width - customBounds.width) ~/ 2, (height - textHeight) ~/ 2 + 20 + customBounds.height, width ~/ 2);
+    return screen.canvas;
+  }
+
+  void processEntity(Entity entity) {
+    var s = sm.get(entity);
+    CanvasElement toDraw;
+    if (s.hunger >= 100) {
+      toDraw = lostHunger;
+    } else if (s.looseness >= 100) {
+      toDraw = lostLooseness;
+    } else if (s.caries >= 100) {
+      toDraw = lostCaries;
+    }
+    ctx.drawImage(toDraw, 0, 0);
+  }
+
+  bool checkProcessing() => state.lost;
+
 }

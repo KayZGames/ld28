@@ -48,6 +48,7 @@ class LevelLoadingSystem extends VoidEntitySystem {
       pathfindingSystem.path = null;
       digestSystem.map = terrainMap;
       digestSystem.initFoodMap();
+      state.restartLevel();
     });
     loadLevel = false;
   }

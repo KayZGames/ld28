@@ -80,3 +80,30 @@ class FoodDigestionSystem extends EntityProcessingSystem {
   }
 }
 
+class StateObservationSystem extends EntityProcessingSystem {
+  ComponentMapper<State> sm;
+  StateObservationSystem() : super(Aspect.getAspectForAllOf([State]));
+
+  void initialize() {
+    sm = new ComponentMapper<State>(State, world);
+  }
+
+  void processEntity(Entity entity) {
+    var s = sm.get(entity);
+    if (s.hunger >= 100) {
+      entity.addComponent(new Waiting());
+      entity.changedInWorld();
+      state.lost = true;
+    }
+    if (s.looseness >= 100) {
+      entity.addComponent(new Waiting());
+      entity.changedInWorld();
+      state.lost = true;
+    }
+    if (s.caries >= 100) {
+      entity.addComponent(new Waiting());
+      entity.changedInWorld();
+      state.lost = true;
+    }
+  }
+}
