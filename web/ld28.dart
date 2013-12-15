@@ -32,7 +32,7 @@ class Game extends GameBase {
             new GameLostRenderingSystem(canvas),
             new LevelCompletedRenderingSystem(canvas),
             new GameWonRenderingSystem(canvas),
-            new StartScreenRenderingSystem(canvas),
+            new StartScreenRenderingSystem(canvas, spriteSheet),
             new FpsRenderingSystem(ctx),
             new GameStateModificationSystem(canvas),
             new LevelLoadingSystem(),

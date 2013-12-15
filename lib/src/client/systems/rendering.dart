@@ -101,7 +101,8 @@ class StartScreenRenderingSystem extends VoidEntitySystem {
   String startButtonText = '''I'll protect your tooth, granny!!!''';
   Rectangle<int> buttonBounds;
   bool highlightButton = false;
-  StartScreenRenderingSystem(CanvasElement canvas) : canvas = canvas,
+  SpriteSheet spriteSheet;
+  StartScreenRenderingSystem(CanvasElement canvas, this.spriteSheet) : canvas = canvas,
                                                      ctx = canvas.context2D,
                                                      width = canvas.width,
                                                      height = canvas.height {
@@ -169,7 +170,10 @@ her hands on such an old and precious tooth.''';
     startScreen..globalAlpha = 0.8
                ..roundRect(startButtonPos.left, startButtonPos.top, startButtonPos.width, startButtonPos.height, 15, strokeStyle: 'black', fillStyle: highlightButton ? '#000088' : '#000044')
                ..globalAlpha = 1.0
-               ..fillText(startButtonText, (width - buttonBounds.width) ~/ 2, height - buttonBounds.height - 200);
+               ..fillText(startButtonText, (width - buttonBounds.width) ~/ 2, height - buttonBounds.height - 200)
+               ..translate(150, height - 150)
+               ..drawImageToRect(spriteSheet.image, spriteSheet['granny_big.png'].dst, sourceRect: spriteSheet['granny_big.png'].src);
+
     ctx.drawImage(startScreen.canvas, 0, 0);
   }
 
