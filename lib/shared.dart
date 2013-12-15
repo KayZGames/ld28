@@ -34,4 +34,9 @@ GameState state = new GameState();
 class GameState {
   bool startScreen = true;
   bool grannyWaiting = true;
+  int level = 0;
+  void restartLevel() {
+    startScreen = false;
+    grannyWaiting = true;
+  }
 }

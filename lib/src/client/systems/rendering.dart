@@ -101,15 +101,48 @@ class StartScreenRenderingSystem extends VoidEntitySystem {
   String startButtonText = '''I'll protect your tooth, granny!!!''';
   Rectangle<int> buttonBounds;
   bool highlightButton = false;
-  StartScreenRenderingSystem(CanvasElement canvas, this.startScreen) : canvas = canvas,
-                                                                       ctx = canvas.context2D {
-    width = startScreen.canvas.width;
-    height = startScreen.canvas.height;
-    buttonBounds = startScreen.textBoundaries(startButtonText);
-    startButtonPos = new Rectangle((width - buttonBounds.width) ~/ 2 - 10, height - buttonBounds.height - 100 - 10, buttonBounds.width + 20, buttonBounds.height + 20);
+  StartScreenRenderingSystem(CanvasElement canvas) : canvas = canvas,
+                                                     ctx = canvas.context2D,
+                                                     width = canvas.width,
+                                                     height = canvas.height {
   }
 
   void initialize() {
+    if (state.startScreen == false) {
+      world.deleteSystem(this);
+      return;
+    }
+
+    startScreen = cq(canvas.width, canvas.height);
+    initContext(startScreen.context2D);
+    var paragraph1 = '''It's Christmas time and you have been wishing
+for one special present for a long long time. Your only Grandma has promised 
+that you'll get what you wished for. But lately, her only tooth has started
+to getting loose.''';
+    var paragraph2 = '''It's so bad, you have started to worry that she might lose it.
+And in the worst case, she might be too sad to celebrate Christmas and you may
+not get your present.''';
+    var paragraph3 = '''That's why you have decided to make sure she won't lose
+her only tooth. You do so by getting her regular appointments at the dentist and
+most importantly prevent her from meeting any tooth fairy that might want to get
+her hands on such an old and precious tooth.''';
+
+    int textWidth = canvas.width - 140;
+    int p1Height = startScreen.textBoundaries(paragraph1, textWidth).height;
+    int p2Height = startScreen.textBoundaries(paragraph2, textWidth).height;
+    startScreen..fillStyle = '#00BBBB'
+               ..fillRect(0, 0, canvas.width, canvas.height)
+               ..globalAlpha = 0.9
+               ..lineWidth = 3
+               ..roundRect(50, 50, canvas.width - 100, canvas.height - 100, 20, strokeStyle: 'black', fillStyle: '#224488')
+               ..globalAlpha = 1.0
+               ..fillStyle = '#00BBFF'
+               ..wrappedText(paragraph1, 70, 70, canvas.width - 140)
+               ..wrappedText(paragraph2, 70, 70 + p1Height + 10, canvas.width - 140)
+               ..wrappedText(paragraph3, 70, 70 + p1Height + 10 + p2Height + 10, canvas.width - 140);
+    buttonBounds = startScreen.textBoundaries(startButtonText);
+    startButtonPos = new Rectangle((width - buttonBounds.width) ~/ 2 - 10, height - buttonBounds.height - 100 - 10, buttonBounds.width + 20, buttonBounds.height + 20);
+
     CanvasQuery hiddenButton = cq(width, height);
     hiddenButton.roundRect(startButtonPos.left, startButtonPos.top, startButtonPos.width, startButtonPos.height, 15, fillStyle: '#010000');
 
@@ -147,7 +180,7 @@ class ButtonRenderingSystem extends VoidEntitySystem {
   CanvasQuery buttonCanvas;
   int width, height;
   String startText = 'Go, Granny, go!';
-  Button startButton;
+  Button startButton, restartButton;
   ButtonRenderingSystem(CanvasElement canvas) : ctx = canvas.context2D,
                                                 width = canvas.width,
                                                 height = canvas.height;
@@ -156,17 +189,19 @@ class ButtonRenderingSystem extends VoidEntitySystem {
     buttonCanvas = cq(width, height);
     initContext(buttonCanvas.context2D);
     startButton = new Button(startText, 50, 50, buttonCanvas.textBoundaries(startText));
+    restartButton = new Button('Restart Level', 50, 100, buttonCanvas.textBoundaries('Restart Level'));
   }
 
   void processSystem() {
     drawButton(startButton);
+    drawButton(restartButton);
     ctx.drawImage(buttonCanvas.canvas, 0, 0);
   }
 
   void drawButton(Button button) {
     buttonCanvas..roundRect(button.pos.left, button.pos.top, button.pos.width, button.pos.height, button.radius, strokeStyle: 'black', fillStyle: button.color)
                 ..fillStyle = button.textColor
-                ..fillText(startText, button.textPos.left, button.textPos.top);
+                ..fillText(button.label, button.textPos.left, button.textPos.top);
   }
 }
 

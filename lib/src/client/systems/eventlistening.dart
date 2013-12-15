@@ -6,7 +6,7 @@ class MouseMovementListeningSystem extends EntityProcessingSystem {
   TerrainMap map;
   CanvasElement canvas;
   int x = 0, y = 0;
-  MouseMovementListeningSystem(this.canvas, this.map) : super(Aspect.getAspectForAllOf([Mouse, Transform, Renderable]));
+  MouseMovementListeningSystem(this.canvas) : super(Aspect.getAspectForAllOf([Mouse, Transform, Renderable]));
 
   void initialize() {
     tm = new ComponentMapper<Transform>(Transform, world);
@@ -40,7 +40,7 @@ class FoodDispenserSystem extends EntityProcessingSystem {
   bool clicked = false;
   FoodDigestionSystem fds;
   TerrainMap map;
-  FoodDispenserSystem(this.canvas, this.map) : super(Aspect.getAspectForAllOf([Mouse, Transform]));
+  FoodDispenserSystem(this.canvas) : super(Aspect.getAspectForAllOf([Mouse, Transform]));
 
   void initialize() {
     tm = new ComponentMapper<Transform>(Transform, world);
@@ -69,17 +69,21 @@ class FoodDispenserSystem extends EntityProcessingSystem {
 
 class GameStateModificationSystem extends EntityProcessingSystem {
   static const START = 1;
+  static const RESTART = 2;
   CanvasElement canvas;
   ButtonRenderingSystem brs;
+  LevelLoadingSystem lls;
   Map<int, Button> buttons = new Map<int, Button>();
   int highlightId = 0;
   GameStateModificationSystem(this.canvas) : super(Aspect.getAspectForAllOf([Waiting]));
 
   void initialize() {
     brs = world.getSystem(ButtonRenderingSystem);
+    lls = world.getSystem(LevelLoadingSystem);
     buttons[0] = new Button.dummy();
     CanvasQuery buttonCanvas = cq(canvas.width, canvas.height);
     addButton(buttonCanvas, brs.startButton, START);
+    addButton(buttonCanvas, brs.restartButton, RESTART);
 
     canvas.onMouseMove.listen((event) {
       var data = buttonCanvas.getImageData(event.offset.x, event.offset.y, 1, 1).data;
@@ -97,6 +101,9 @@ class GameStateModificationSystem extends EntityProcessingSystem {
     canvas.onMouseUp.listen((_) {
       if (highlightId == START) {
         state.grannyWaiting = false;
+      } else if (highlightId == RESTART) {
+        state.restartLevel();
+        lls.loadLevel = true;
       }
     });
   }

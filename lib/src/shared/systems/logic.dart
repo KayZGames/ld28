@@ -37,7 +37,7 @@ class FoodDigestionSystem extends EntityProcessingSystem {
   ComponentMapper<Eating> em;
   List<Entity> foodEntities;
   TerrainMap map;
-  FoodDigestionSystem(this.map) : super(Aspect.getAspectForAllOf([Transform, State]));
+  FoodDigestionSystem() : super(Aspect.getAspectForAllOf([Transform, State]));
 
   void initialize() {
     tm = new ComponentMapper<Transform>(Transform, world);
@@ -45,6 +45,10 @@ class FoodDigestionSystem extends EntityProcessingSystem {
     fm = new ComponentMapper<Food>(Food, world);
     em = new ComponentMapper<Eating>(Eating, world);
 
+    initFoodMap();
+  }
+
+  void initFoodMap() {
     foodEntities = new List(MAX_WIDTH * MAX_HEIGHT);
   }
 
