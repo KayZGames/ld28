@@ -50,7 +50,8 @@ class Directed extends Component {}
 class Food extends Component {
   double filling, hardness, sweetness;
   double timeToEat, timeLeftToEat;
-  Food({this.filling: 20.0, this.hardness: 20.0, this.sweetness: 20.0, this.timeToEat: 1000.0}) {
+  String name;
+  Food(this.name, {this.filling: 20.0, this.hardness: 20.0, this.sweetness: 20.0, this.timeToEat: 1000.0}) {
     timeLeftToEat = timeToEat;
   }
 }

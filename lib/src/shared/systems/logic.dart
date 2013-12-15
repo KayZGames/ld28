@@ -65,7 +65,7 @@ class FoodDigestionSystem extends EntityProcessingSystem {
       s.caries = max(0.0, min(100.0, s.caries + f.sweetness * mult));
       if (f.timeLeftToEat == f.timeToEat) {
         var eatingSound = world.createEntity();
-        eatingSound.addComponent(new Sound('carrot'));
+        eatingSound.addComponent(new Sound(f.name));
         eatingSound.addToWorld();
       }
       f.timeLeftToEat -= world.delta;

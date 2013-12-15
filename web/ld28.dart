@@ -41,7 +41,7 @@ class Game extends GameBase {
   }
 
   Future onInit() {
-    helper.audioHelper.loadAudioClips(['carrot']);
+    helper.audioHelper.loadAudioClips(['carrot', 'cookies', 'chips']);
   }
 
   Future onInitDone() {}
