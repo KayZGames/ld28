@@ -182,10 +182,12 @@ her hands on such an old and precious tooth.''';
                ..roundRect(startButtonPos.left, startButtonPos.top, startButtonPos.width, startButtonPos.height, 15, strokeStyle: 'black', fillStyle: highlightButton ? '#000088' : '#000044')
                ..globalAlpha = 1.0
                ..fillText(startButtonText, (width - buttonBounds.width) ~/ 2, height - buttonBounds.height - 200)
+               ..save()
                ..translate(150, height - 150)
                ..drawImageToRect(spriteSheet.image, spriteSheet['granny_big.png'].dst, sourceRect: spriteSheet['granny_big.png'].src)
                ..translate(500, 0)
-               ..drawImageToRect(spriteSheet.image, spriteSheet['fairy_big.png'].dst, sourceRect: spriteSheet['fairy_big.png'].src);
+               ..drawImageToRect(spriteSheet.image, spriteSheet['fairy_big.png'].dst, sourceRect: spriteSheet['fairy_big.png'].src)
+               ..restore();
 
     ctx.drawImage(startScreen.canvas, 0, 0);
   }

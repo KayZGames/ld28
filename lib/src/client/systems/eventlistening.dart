@@ -141,7 +141,7 @@ class GameStateModificationSystem extends EntityProcessingSystem {
   }
 
   void addButton(CanvasQuery buttonCanvas, Button button, int id) {
-    buttonCanvas..roundRect(button.pos.left, button.pos.top, button.pos.width, button.pos.height, button.radius, fillStyle: '0${id}0000');
+    buttonCanvas..roundRect(button.pos.left, button.pos.top, button.pos.width, button.pos.height, button.radius, fillStyle: '#0${id}0000');
     buttons[id] = button;
   }
 
