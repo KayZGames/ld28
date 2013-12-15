@@ -1,23 +1,34 @@
 part of client;
 
-class TerrainRenderingSystem extends EntityProcessingSystem {
+class TerrainRenderingSystem extends EntitySystem {
   CanvasRenderingContext2D ctx;
   SpriteSheet spriteSheet;
   ComponentMapper<TerrainTile> tm;
+  CanvasQuery terrainBuffer;
   TerrainRenderingSystem(this.ctx, this.spriteSheet) : super(Aspect.getAspectForAllOf([TerrainTile]));
 
   void initialize() {
     tm = new ComponentMapper<TerrainTile>(TerrainTile, world);
+
   }
 
-  void processEntity(Entity entity) {
-    var t = tm.get(entity);
-    var sprite = spriteSheet['${t.spriteName}.png'];
-    ctx.save();
-    ctx.translate(t.x * GRID_SIZE, t.y* GRID_SIZE );
-    ctx.drawImageToRect(spriteSheet.image, sprite.dst, sourceRect: sprite.src);
-    ctx.restore();
+  void processEntities(ReadOnlyBag<Entity> entities) {
+    if (null == terrainBuffer) {
+      terrainBuffer = cq(800, 600);
+      entities.forEach((entity) {
+        var t = tm.get(entity);
+        var sprite = spriteSheet['${t.spriteName}.png'];
+        terrainBuffer.context2D..save()
+                               ..translate(t.x * GRID_SIZE, t.y* GRID_SIZE )
+                               ..drawImageToRect(spriteSheet.image, sprite.dst, sourceRect: sprite.src)
+                               ..restore();
+      });
+    }
+    ctx.drawImage(terrainBuffer.canvas, 0, 0);
   }
+
+  bool checkProcessing() => true;
+
 }
 
 class SpriteRenderingSystem extends EntityProcessingSystem {

@@ -7,6 +7,7 @@ class LevelLoadingSystem extends VoidEntitySystem {
   PathfindingSystem pathfindingSystem;
   FoodDigestionSystem digestSystem;
   FairyEncounterSystem fairySystem;
+  TerrainRenderingSystem terrainSystem;
 
   void initialize() {
     mouseListening = world.getSystem(MouseMovementListeningSystem);
@@ -14,6 +15,7 @@ class LevelLoadingSystem extends VoidEntitySystem {
     pathfindingSystem = world.getSystem(PathfindingSystem);
     digestSystem = world.getSystem(FoodDigestionSystem);
     fairySystem = world.getSystem(FairyEncounterSystem);
+    terrainSystem = world.getSystem(TerrainRenderingSystem);
   }
 
   void processSystem() {
@@ -53,6 +55,7 @@ class LevelLoadingSystem extends VoidEntitySystem {
       digestSystem.map = terrainMap;
       digestSystem.initFoodMap();
       fairySystem.fairyEntities = fairyEntities;
+      terrainSystem.terrainBuffer = null;
       state.restartLevel();
     });
     loadLevel = false;
