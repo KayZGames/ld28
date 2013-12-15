@@ -5,7 +5,7 @@ class PathfindingSystem extends IntervalEntityProcessingSystem {
   Queue<TerrainTile> path;
   ComponentMapper<Transform> tm;
 
-  PathfindingSystem(this.map) : super(200, Aspect.getAspectForAllOf([Transform, PathFinder]).exclude([Eating]));
+  PathfindingSystem(this.map) : super(200, Aspect.getAspectForAllOf([Transform, PathFinder]).exclude([Eating, Waiting]));
 
   void initialize() {
     tm = new ComponentMapper<Transform>(Transform, world);

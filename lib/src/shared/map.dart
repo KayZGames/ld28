@@ -54,8 +54,9 @@ class TerrainMap implements Graph<TerrainTile> {
     return occupiable(index) && !completeMap[index].occupied;
   }
 
-  void occupy(int index) {
+  void occupy(int index, int cost) {
     completeMap[index].occupied = true;
+    completeMap[index].cost = cost;
   }
 
   void free(int index) {

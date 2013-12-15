@@ -29,4 +29,8 @@ Random random = new Random();
 
 int indexInGrid(int x, int y) => x + y * MAX_WIDTH;
 
+GameState state = new GameState();
 
+class GameState {
+  bool startScreen = true;
+}

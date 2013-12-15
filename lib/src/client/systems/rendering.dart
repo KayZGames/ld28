@@ -91,3 +91,53 @@ class StateRenderingSystem extends EntityProcessingSystem {
     ctx.fillRect(width - 100, 50, s.caries, 20);
   }
 }
+
+class StartScreenRenderingSystem extends VoidEntitySystem {
+  CanvasElement canvas;
+  CanvasRenderingContext2D ctx;
+  CanvasQuery startScreen;
+  Rectangle startButtonPos;
+  int width, height;
+  String startButtonText = '''I'll protect your tooth, granny!!!''';
+  Rectangle<int> buttonBounds;
+  bool highlightButton = false;
+  StartScreenRenderingSystem(CanvasElement canvas, this.startScreen) : canvas = canvas,
+                                                                       ctx = canvas.context2D {
+    width = startScreen.canvas.width;
+    height = startScreen.canvas.height;
+    buttonBounds = startScreen.textBoundaries(startButtonText);
+    startButtonPos = new Rectangle((width - buttonBounds.width) ~/ 2 - 10, height - buttonBounds.height - 100 - 10, buttonBounds.width + 20, buttonBounds.height + 20);
+  }
+
+  void initialize() {
+    CanvasQuery hiddenButton = cq(width, height);
+    hiddenButton.roundRect(startButtonPos.left, startButtonPos.top, startButtonPos.width, startButtonPos.height, 15, fillStyle: '#010000');
+
+    var mouseMoveSubscription;
+    var mouseClickSubscription;
+    mouseMoveSubscription = canvas.onMouseMove.listen((event) {
+      var data = hiddenButton.getImageData(event.offset.x, event.offset.y, 1, 1).data;
+      if (data[0] == 1) {
+        highlightButton = true;
+      } else {
+        highlightButton = false;
+      }
+    });
+    mouseClickSubscription = canvas.onClick.listen((_) {
+      if (highlightButton) {
+        mouseClickSubscription.cancel();
+        mouseMoveSubscription.cancel();
+        world.deleteSystem(this);
+        state.startScreen = false;
+      }
+    });
+  }
+
+  void processSystem() {
+    startScreen..globalAlpha = 0.8
+               ..roundRect(startButtonPos.left, startButtonPos.top, startButtonPos.width, startButtonPos.height, 15, strokeStyle: 'black', fillStyle: highlightButton ? '#000088' : '#000044')
+               ..globalAlpha = 1.0
+               ..fillText(startButtonText, (width - buttonBounds.width) ~/ 2, height - buttonBounds.height - 100);
+    ctx.drawImage(startScreen.canvas, 0, 0);
+  }
+}

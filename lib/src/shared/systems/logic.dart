@@ -18,7 +18,7 @@ class SpriteDirectionSystem extends EntityProcessingSystem {
 
 class HungerSystem extends IntervalEntityProcessingSystem {
   ComponentMapper<State> sm;
-  HungerSystem() : super(200, Aspect.getAspectForAllOf([State]).exclude([Eating]));
+  HungerSystem() : super(200, Aspect.getAspectForAllOf([State]).exclude([Eating, Waiting]));
 
   void initialize() {
     sm = new ComponentMapper<State>(State, world);
@@ -46,12 +46,6 @@ class FoodDigestionSystem extends EntityProcessingSystem {
     em = new ComponentMapper<Eating>(Eating, world);
 
     foodEntities = new List(MAX_WIDTH * MAX_HEIGHT);
-    GroupManager gm = world.getManager(GroupManager);
-    var foodGroup = gm.getEntities('food');
-    foodGroup.forEach((food) {
-      var t = tm.get(food);
-      foodEntities[indexInGrid(t.x, t.y)] = food;
-    });
   }
 
   void processEntity(Entity entity) {

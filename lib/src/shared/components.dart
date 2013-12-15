@@ -64,3 +64,4 @@ class State extends Component {
 
 class Eating extends Component {}
 class Mouse extends Component {}
+class Waiting extends Component {}

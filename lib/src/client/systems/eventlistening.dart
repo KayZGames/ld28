@@ -54,9 +54,26 @@ class MouseClickListeningSystem extends EntityProcessingSystem {
       food.addComponent(new Renderable('carrot'));
       food.addToWorld();
       fds.foodEntities[index] = food;
-      map.occupy(index);
+      map.occupy(index, -100);
     }
   }
 
-  bool checkProcessing() => clicked;
+  bool checkProcessing() => !state.startScreen && clicked;
+}
+
+class GameStateModificationSystem extends EntityProcessingSystem {
+  CanvasElement canvas;
+  bool waiting = true;
+  GameStateModificationSystem(this.canvas) : super(Aspect.getAspectForAllOf([Waiting]));
+
+  void initialize() {
+    canvas.onMouseUp.listen((_) => waiting = state.startScreen);
+  }
+
+  void processEntity(Entity entity) {
+    entity.removeComponent(Waiting);
+    entity.changedInWorld();
+  }
+
+  bool checkProcessing() => !waiting;
 }
