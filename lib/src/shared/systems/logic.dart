@@ -63,6 +63,11 @@ class FoodDigestionSystem extends EntityProcessingSystem {
       s.hunger = max(0.0, min(100.0, s.hunger - f.filling * mult));
       s.looseness = max(0.0, min(100.0, s.looseness + f.hardness * mult));
       s.caries = max(0.0, min(100.0, s.caries + f.sweetness * mult));
+      if (f.timeLeftToEat == f.timeToEat) {
+        var eatingSound = world.createEntity();
+        eatingSound.addComponent(new Sound('carrot'));
+        eatingSound.addToWorld();
+      }
       f.timeLeftToEat -= world.delta;
       var eating = em.getSafe(entity);
       if (null == eating) {

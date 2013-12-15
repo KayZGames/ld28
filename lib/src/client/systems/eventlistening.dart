@@ -57,7 +57,7 @@ class FoodDispenserSystem extends EntityProcessingSystem {
       var food = world.createEntity();
       FoodInfo foodInfo = foodTypes[state.selectedFood];
       food.addComponent(new Transform(t.x, t.y));
-      food.addComponent(new Food(filling: foodInfo.filling, hardness: foodInfo.hardness, sweetness: foodInfo.sweetness));
+      food.addComponent(new Food(filling: foodInfo.filling, hardness: foodInfo.hardness, sweetness: foodInfo.sweetness, timeToEat: foodInfo.timeToEat));
       food.addComponent(new Renderable(foodInfo.spriteName));
       food.addToWorld();
       fds.foodEntities[index] = food;

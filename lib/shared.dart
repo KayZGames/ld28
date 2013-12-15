@@ -44,7 +44,7 @@ class GameState {
   }
 }
 
-var foodTypes = { 'carrot': new FoodInfo('carrot', 20.0, 40.0, -10.0, 1000.0),
+var foodTypes = { 'carrot': new FoodInfo('carrot', 20.0, 40.0, -10.0, 3000.0),
                   'cookies': new FoodInfo('cookies', 40.0, 20.0, 30.0, 1000.0),
                   'chips': new FoodInfo('chips', 10.0, 5.0, 15.0, 1000.0)
 };

@@ -36,10 +36,13 @@ class Game extends GameBase {
             new FpsRenderingSystem(ctx),
             new GameStateModificationSystem(canvas),
             new LevelLoadingSystem(),
+            new SoundSystem(helper.audioHelper)
     ];
   }
 
-  Future onInit() {}
+  Future onInit() {
+    helper.audioHelper.loadAudioClips(['carrot']);
+  }
 
   Future onInitDone() {}
 }
