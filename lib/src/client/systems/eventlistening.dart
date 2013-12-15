@@ -70,6 +70,7 @@ class FoodDispenserSystem extends EntityProcessingSystem {
 class GameStateModificationSystem extends EntityProcessingSystem {
   static const START = 1;
   static const RESTART = 2;
+  static const NEXT_LEVEL = 3;
   CanvasElement canvas;
   ButtonRenderingSystem brs;
   LevelLoadingSystem lls;
@@ -84,6 +85,7 @@ class GameStateModificationSystem extends EntityProcessingSystem {
     CanvasQuery buttonCanvas = cq(canvas.width, canvas.height);
     addButton(buttonCanvas, brs.startButton, START);
     addButton(buttonCanvas, brs.restartButton, RESTART);
+    addButton(buttonCanvas, brs.nextLevelButton, NEXT_LEVEL);
 
     canvas.onMouseMove.listen((event) {
       var data = buttonCanvas.getImageData(event.offset.x, event.offset.y, 1, 1).data;
@@ -99,11 +101,21 @@ class GameStateModificationSystem extends EntityProcessingSystem {
     });
 
     canvas.onMouseUp.listen((_) {
-      if (highlightId == START) {
-        state.grannyWaiting = false;
-      } else if (highlightId == RESTART) {
-        state.restartLevel();
-        lls.loadLevel = true;
+      if (!state.startScreen) {
+        switch (highlightId) {
+          case START:
+            state.grannyWaiting = false;
+            break;
+          case RESTART:
+            state.restartLevel();
+            lls.loadLevel = true;
+            break;
+          case NEXT_LEVEL:
+            state.level = min(1, state.level + 1);
+            state.restartLevel();
+            lls.loadLevel = true;
+            break;
+        }
       }
     });
   }

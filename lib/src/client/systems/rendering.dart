@@ -180,7 +180,7 @@ class ButtonRenderingSystem extends VoidEntitySystem {
   CanvasQuery buttonCanvas;
   int width, height;
   String startText = 'Go, Granny, go!';
-  Button startButton, restartButton;
+  Button startButton, restartButton, nextLevelButton;
   ButtonRenderingSystem(CanvasElement canvas) : ctx = canvas.context2D,
                                                 width = canvas.width,
                                                 height = canvas.height;
@@ -190,11 +190,13 @@ class ButtonRenderingSystem extends VoidEntitySystem {
     initContext(buttonCanvas.context2D);
     startButton = new Button(startText, 50, 50, buttonCanvas.textBoundaries(startText));
     restartButton = new Button('Restart Level', 50, 100, buttonCanvas.textBoundaries('Restart Level'));
+    nextLevelButton = new Button('Next Level', 50, 150, buttonCanvas.textBoundaries('Next Level'));
   }
 
   void processSystem() {
     drawButton(startButton);
     drawButton(restartButton);
+    drawButton(nextLevelButton);
     ctx.drawImage(buttonCanvas.canvas, 0, 0);
   }
 
