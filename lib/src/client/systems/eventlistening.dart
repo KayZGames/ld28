@@ -128,12 +128,21 @@ class GameStateModificationSystem extends EntityProcessingSystem {
             break;
           case CARROT:
             state.selectedFood = 'carrot';
+            buttons[CARROT].selected = true;
+            buttons[COOKIES].selected = false;
+            buttons[CHIPS].selected = false;
             break;
           case COOKIES:
             state.selectedFood = 'cookies';
+            buttons[CARROT].selected = false;
+            buttons[COOKIES].selected = true;
+            buttons[CHIPS].selected = false;
             break;
           case CHIPS:
             state.selectedFood = 'chips';
+            buttons[CARROT].selected = false;
+            buttons[COOKIES].selected = false;
+            buttons[CHIPS].selected = true;
             break;
         }
       }
