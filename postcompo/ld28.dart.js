@@ -10081,3 +10081,4 @@ Isolate.$finishClasses=a.$finishClasses
 Isolate.makeConstantList=a.makeConstantList
 return Isolate}}
 })()
+//@ sourceMappingURL=http://denniskaselow.github.io/ld28/postcompo/ld28.dart.js.map
