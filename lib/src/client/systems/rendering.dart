@@ -213,6 +213,7 @@ class ButtonRenderingSystem extends VoidEntitySystem {
     restartButton = new Button('Restart Level', 50, height - 50, buttonCanvas.textBoundaries('Restart Level'), () => true);
     nextLevelButton = new Button('Next Level', width - 200, height - 50, buttonCanvas.textBoundaries('Next Level'), () => state.won && state.level < state.maxLevel);
     carrotButton = new Button('Carrots', 50, 45, buttonCanvas.textBoundaries('Carrots'), () => state.grannyWaiting);
+    carrotButton.selected = true;
     cookiesButton = new Button('Cookies', 200, 45, buttonCanvas.textBoundaries('Cookies'), () => state.grannyWaiting);
     chipsButton = new Button('Chips', 350, 45, buttonCanvas.textBoundaries('Chips'), () => state.grannyWaiting);
   }
