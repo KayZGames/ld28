@@ -11,8 +11,9 @@ class TerrainMap implements Graph<TerrainTile> {
   List<TerrainTile> completeMap;
   List<TerrainTile> map;
   TerrainTile goal;
-  TerrainMap(List<TerrainTile> completeMap, this.goal) : map = completeMap.where((tile) => null != tile).toList(growable: false),
-                                                         completeMap = completeMap;
+  TerrainMap(List<TerrainTile> completeMap, this.goal)
+      : map = completeMap.where((tile) => null != tile).toList(growable: false),
+        completeMap = completeMap;
 
   Iterable<TerrainTile> get allNodes => map;
   num getDistance(TerrainTile a, TerrainTile b) => b.cost;
@@ -20,7 +21,7 @@ class TerrainMap implements Graph<TerrainTile> {
   Iterable<TerrainTile> getNeighboursOf(TerrainTile node) {
     var result = [];
     if (node.y > 0) {
-      addNeighbour(result, (node.y-1) * MAX_WIDTH + node.x);
+      addNeighbour(result, (node.y - 1) * MAX_WIDTH + node.x);
     }
     if (node.x % MAX_WIDTH > 0) {
       addNeighbour(result, node.y * MAX_WIDTH + node.x - 1);
@@ -29,7 +30,7 @@ class TerrainMap implements Graph<TerrainTile> {
       addNeighbour(result, node.y * MAX_WIDTH + node.x + 1);
     }
     if (node.y < MAX_HEIGHT - 1) {
-      addNeighbour(result, (node.y+1) * MAX_WIDTH + node.x);
+      addNeighbour(result, (node.y + 1) * MAX_WIDTH + node.x);
     }
     return result;
   }
@@ -63,5 +64,4 @@ class TerrainMap implements Graph<TerrainTile> {
     completeMap[index].occupied = false;
     completeMap[index].cost = 10;
   }
-
 }

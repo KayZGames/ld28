@@ -24,7 +24,9 @@ class LevelLoadingSystem extends VoidEntitySystem {
     TerrainTile startNode;
     TerrainTile goalNode;
     TerrainMap terrainMap;
-    HttpRequest.getString('assets/ld28/levels/0${state.level}.txt').then((content) {
+    HttpRequest
+        .getString('packages/ld28/assets/levels/0${state.level}.txt')
+        .then((content) {
       var tiles = content.split('');
       var fairyEntities = new List<bool>.filled(MAX_WIDTH * MAX_HEIGHT, false);
       tiles.where((tile) => tile != '\n' && tile != '\r').forEach((tile) {
@@ -43,7 +45,14 @@ class LevelLoadingSystem extends VoidEntitySystem {
         }
       });
       terrainMap = new TerrainMap(map, goalNode);
-      addEntity([new Transform(startNode.x, startNode.y), new PathFinder(), new Renderable('player_'), new Directed(), new State(), new Waiting()]);
+      addEntity([
+        new Transform(startNode.x, startNode.y),
+        new PathFinder(),
+        new Renderable('player_'),
+        new Directed(),
+        new State(),
+        new Waiting()
+      ]);
       addEntity([new Transform(0, 0), new Mouse(), new Renderable('cursor')]);
       map.where((tile) => null != tile).forEach((tile) {
         addEntity([tile]);

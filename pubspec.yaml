@@ -3,8 +3,9 @@ description: LD28 - You Only Get One
 dependencies:
   a_star: any
   browser: any
-  canvas_query: any
-  dartemis_toolbox: any
   gamedev_helpers:
-    git: https://github.com/denniskaselow/gamedev_helpers
-#    path: ../gamedev_helpers
+#    git: https://github.com/denniskaselow/gamedev_helpers
+    path: ../gamedev_helpers
+  dart_to_js_script_rewriter: any
+transformers:
+- dart_to_js_script_rewriter

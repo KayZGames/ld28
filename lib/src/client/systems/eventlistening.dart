@@ -1,27 +1,29 @@
 part of client;
 
 class MouseMovementListeningSystem extends EntityProcessingSystem {
-  ComponentMapper<Transform> tm;
-  ComponentMapper<Renderable> rm;
+  Mapper<Transform> tm;
+  Mapper<Renderable> rm;
   TerrainMap map;
   CanvasElement canvas;
-  int x = 0, y = 0;
-  MouseMovementListeningSystem(this.canvas) : super(Aspect.getAspectForAllOf([Mouse, Transform, Renderable]));
+  int x = 0,
+      y = 0;
+  MouseMovementListeningSystem(this.canvas)
+      : super(Aspect.getAspectForAllOf([Mouse, Transform, Renderable]));
 
   void initialize() {
-    tm = new ComponentMapper<Transform>(Transform, world);
-    rm = new ComponentMapper<Renderable>(Renderable, world);
+    tm = new Mapper<Transform>(Transform, world);
+    rm = new Mapper<Renderable>(Renderable, world);
 
     canvas.onMouseMove.listen((data) {
-      x = (GRID_SIZE~/2 + data.offset.x) ~/ GRID_SIZE;
-      y = (GRID_SIZE~/2 + data.offset.y) ~/ GRID_SIZE;
+      x = (GRID_SIZE ~/ 2 + data.offset.x) ~/ GRID_SIZE;
+      y = (GRID_SIZE ~/ 2 + data.offset.y) ~/ GRID_SIZE;
     });
   }
 
   void processEntity(Entity entity) {
-    var t = tm.get(entity);
-    var r = rm.get(entity);
-    var gx = min(max(0, x), MAX_WIDTH-  1);
+    var t = tm[entity];
+    var r = rm[entity];
+    var gx = min(max(0, x), MAX_WIDTH - 1);
     var gy = min(max(0, y), MAX_HEIGHT - 1);
     var index = indexInGrid(gx, gy);
     t.x = gx;
@@ -29,21 +31,22 @@ class MouseMovementListeningSystem extends EntityProcessingSystem {
     if (map.occupiable(index)) {
       r.subspriteName = '';
     } else {
-      r.subspriteName= '_hidden';
+      r.subspriteName = '_hidden';
     }
   }
 }
 
 class FoodDispenserSystem extends EntityProcessingSystem {
-  ComponentMapper<Transform> tm;
+  Mapper<Transform> tm;
   CanvasElement canvas;
   bool clicked = false;
   FoodDigestionSystem fds;
   TerrainMap map;
-  FoodDispenserSystem(this.canvas) : super(Aspect.getAspectForAllOf([Mouse, Transform]));
+  FoodDispenserSystem(this.canvas)
+      : super(Aspect.getAspectForAllOf([Mouse, Transform]));
 
   void initialize() {
-    tm = new ComponentMapper<Transform>(Transform, world);
+    tm = new Mapper<Transform>(Transform, world);
     fds = world.getSystem(FoodDigestionSystem);
 
     canvas.onMouseDown.listen((_) => clicked = true);
@@ -51,13 +54,17 @@ class FoodDispenserSystem extends EntityProcessingSystem {
   }
 
   void processEntity(Entity entity) {
-    var t = tm.get(entity);
+    var t = tm[entity];
     var index = indexInGrid(t.x, t.y);
     if (fds.foodEntities[index] == null && map.acceptsOccupant(index)) {
       var food = world.createEntity();
       FoodInfo foodInfo = foodTypes[state.selectedFood];
       food.addComponent(new Transform(t.x, t.y));
-      food.addComponent(new Food(foodInfo.spriteName, filling: foodInfo.filling, hardness: foodInfo.hardness, sweetness: foodInfo.sweetness, timeToEat: foodInfo.timeToEat));
+      food.addComponent(new Food(foodInfo.spriteName,
+          filling: foodInfo.filling,
+          hardness: foodInfo.hardness,
+          sweetness: foodInfo.sweetness,
+          timeToEat: foodInfo.timeToEat));
       food.addComponent(new Renderable(foodInfo.spriteName));
       food.addToWorld();
       fds.foodEntities[index] = food;
@@ -71,7 +78,8 @@ class FoodDispenserSystem extends EntityProcessingSystem {
     clicked = false;
   }
 
-  bool checkProcessing() => !state.startScreen && state.grannyWaiting && clicked;
+  bool checkProcessing() =>
+      !state.startScreen && state.grannyWaiting && clicked;
 }
 
 class GameStateModificationSystem extends EntityProcessingSystem {
@@ -86,13 +94,15 @@ class GameStateModificationSystem extends EntityProcessingSystem {
   LevelLoadingSystem lls;
   Map<int, Button> buttons = new Map<int, Button>();
   int highlightId = 0;
-  GameStateModificationSystem(this.canvas) : super(Aspect.getAspectForAllOf([Waiting]));
+  GameStateModificationSystem(this.canvas)
+      : super(Aspect.getAspectForAllOf([Waiting]));
 
   void initialize() {
     brs = world.getSystem(ButtonRenderingSystem);
     lls = world.getSystem(LevelLoadingSystem);
     buttons[0] = new Button.dummy();
-    CanvasQuery buttonCanvas = cq(canvas.width, canvas.height);
+    var buttonCanvas =
+        new CanvasElement(width: canvas.width, height: canvas.height).context2D;
     addButton(buttonCanvas, brs.startButton, START);
     addButton(buttonCanvas, brs.restartButton, RESTART);
     addButton(buttonCanvas, brs.nextLevelButton, NEXT_LEVEL);
@@ -101,7 +111,8 @@ class GameStateModificationSystem extends EntityProcessingSystem {
     addButton(buttonCanvas, brs.chipsButton, CHIPS);
 
     canvas.onMouseMove.listen((event) {
-      var data = buttonCanvas.getImageData(event.offset.x, event.offset.y, 1, 1).data;
+      var data =
+          buttonCanvas.getImageData(event.offset.x, event.offset.y, 1, 1).data;
       var id = data[0];
       if (id != 0 && data[3] == 255 && buttons.containsKey(id)) {
         buttons[highlightId].highlight = false;
@@ -114,7 +125,9 @@ class GameStateModificationSystem extends EntityProcessingSystem {
     });
 
     canvas.onMouseUp.listen((_) {
-      if (!state.startScreen && buttons[highlightId] != null && buttons[highlightId].show) {
+      if (!state.startScreen &&
+          buttons[highlightId] != null &&
+          buttons[highlightId].show) {
         switch (highlightId) {
           case START:
             state.grannyWaiting = false;
@@ -149,8 +162,13 @@ class GameStateModificationSystem extends EntityProcessingSystem {
     });
   }
 
-  void addButton(CanvasQuery buttonCanvas, Button button, int id) {
-    buttonCanvas..roundRect(button.pos.left, button.pos.top, button.pos.width, button.pos.height, button.radius, fillStyle: '#0${id}0000');
+  void addButton(CanvasRenderingContext2D buttonCanvas, Button button, int id) {
+    buttonCanvas
+      ..save()
+      ..fillStyle = '#0${id}0000'
+      ..fillRect(
+          button.pos.left, button.pos.top, button.pos.width, button.pos.height)
+      ..restore();
     buttons[id] = button;
   }
 
@@ -159,5 +177,6 @@ class GameStateModificationSystem extends EntityProcessingSystem {
     entity.changedInWorld();
   }
 
-  bool checkProcessing() => !state.startScreen && !state.grannyWaiting && !state.lost && !state.won;
+  bool checkProcessing() =>
+      !state.startScreen && !state.grannyWaiting && !state.lost && !state.won;
 }

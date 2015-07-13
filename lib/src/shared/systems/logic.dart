@@ -1,49 +1,53 @@
 part of shared;
 
-
 class SpriteDirectionSystem extends EntityProcessingSystem {
-  ComponentMapper<Transform> tm;
-  ComponentMapper<Renderable> rm;
-  SpriteDirectionSystem() : super(Aspect.getAspectForAllOf([Transform, Renderable, Directed]));
+  Mapper<Transform> tm;
+  Mapper<Renderable> rm;
+  SpriteDirectionSystem()
+      : super(Aspect.getAspectForAllOf([Transform, Renderable, Directed]));
 
   void initialize() {
-    tm = new ComponentMapper<Transform>(Transform, world);
-    rm = new ComponentMapper<Renderable>(Renderable, world);
+    tm = new Mapper<Transform>(Transform, world);
+    rm = new Mapper<Renderable>(Renderable, world);
   }
 
   void processEntity(Entity entity) {
-    rm.get(entity).subspriteName = tm.get(entity).direction;
+    rm[entity].subspriteName = tm[entity].direction;
   }
 }
 
-class HungerSystem extends IntervalEntityProcessingSystem {
-  ComponentMapper<State> sm;
-  HungerSystem() : super(200, Aspect.getAspectForAllOf([State]).exclude([Eating, Waiting]));
+class HungerSystem extends IntervalEntitySystem {
+  Mapper<State> sm;
+  HungerSystem() : super(
+          0.2, Aspect.getAspectForAllOf([State]).exclude([Eating, Waiting]));
 
   void initialize() {
-    sm = new ComponentMapper<State>(State, world);
+    sm = new Mapper<State>(State, world);
   }
 
-  void processEntity(Entity entity) {
-    var s = sm.get(entity);
-    s.hunger = min(100.0, s.hunger + 2);
+  @override
+  void processEntities(Iterable<Entity> entities) {
+    entities.forEach((entity) {
+      var s = sm[entity];
+      s.hunger = min(100.0, s.hunger + 2);
+    });
   }
 }
 
 class FoodDigestionSystem extends EntityProcessingSystem {
-  ComponentMapper<Transform> tm;
-  ComponentMapper<State> sm;
-  ComponentMapper<Food> fm;
-  ComponentMapper<Eating> em;
+  Mapper<Transform> tm;
+  Mapper<State> sm;
+  Mapper<Food> fm;
+  Mapper<Eating> em;
   List<Entity> foodEntities;
   TerrainMap map;
   FoodDigestionSystem() : super(Aspect.getAspectForAllOf([Transform, State]));
 
   void initialize() {
-    tm = new ComponentMapper<Transform>(Transform, world);
-    sm = new ComponentMapper<State>(State, world);
-    fm = new ComponentMapper<Food>(Food, world);
-    em = new ComponentMapper<Eating>(Eating, world);
+    tm = new Mapper<Transform>(Transform, world);
+    sm = new Mapper<State>(State, world);
+    fm = new Mapper<Food>(Food, world);
+    em = new Mapper<Eating>(Eating, world);
 
     initFoodMap();
   }
@@ -53,13 +57,13 @@ class FoodDigestionSystem extends EntityProcessingSystem {
   }
 
   void processEntity(Entity entity) {
-    var t = tm.get(entity);
+    var t = tm[entity];
     var index = indexInGrid(t.x, t.y);
     var food = foodEntities[index];
     if (null != food) {
-      var s = sm.get(entity);
-      var f = fm.get(food);
-      var mult = world.delta/f.timeToEat;
+      var s = sm[entity];
+      var f = fm[food];
+      var mult = world.delta / f.timeToEat;
       s.hunger = max(0.0, min(100.0, s.hunger - f.filling * mult));
       s.looseness = max(0.0, min(100.0, s.looseness + f.hardness * mult));
       s.caries = max(0.0, min(100.0, s.caries + f.sweetness * mult));
@@ -86,15 +90,15 @@ class FoodDigestionSystem extends EntityProcessingSystem {
 }
 
 class StateObservationSystem extends EntityProcessingSystem {
-  ComponentMapper<State> sm;
+  Mapper<State> sm;
   StateObservationSystem() : super(Aspect.getAspectForAllOf([State]));
 
   void initialize() {
-    sm = new ComponentMapper<State>(State, world);
+    sm = new Mapper<State>(State, world);
   }
 
   void processEntity(Entity entity) {
-    var s = sm.get(entity);
+    var s = sm[entity];
     if (s.hunger >= 100) {
       entity.addComponent(new Waiting());
       entity.changedInWorld();
@@ -114,21 +118,21 @@ class StateObservationSystem extends EntityProcessingSystem {
 }
 
 class FairyEncounterSystem extends EntityProcessingSystem {
-  ComponentMapper<Transform> tm;
-  ComponentMapper<State> sm;
+  Mapper<Transform> tm;
+  Mapper<State> sm;
   List<bool> fairyEntities;
   FairyEncounterSystem() : super(Aspect.getAspectForAllOf([State, Transform]));
 
   void initialize() {
-    tm = new ComponentMapper<Transform>(Transform, world);
-    sm = new ComponentMapper<State>(State, world);
+    tm = new Mapper<Transform>(Transform, world);
+    sm = new Mapper<State>(State, world);
   }
 
   void processEntity(Entity entity) {
-    var t = tm.get(entity);
+    var t = tm[entity];
     var index = indexInGrid(t.x, t.y);
     if (fairyEntities[index]) {
-      sm.get(entity).looseness = 100.0;
+      sm[entity].looseness = 100.0;
     }
   }
 }

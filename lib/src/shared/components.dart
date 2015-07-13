@@ -29,10 +29,11 @@ class TerrainTile extends Component with Node {
   int cost;
   String spriteName;
   bool occupied, occupiable;
-  TerrainTile(this.x, this.y, TileInfo tileInfo) : cost = tileInfo.cost,
-                                                   spriteName = tileInfo.sprite,
-                                                   occupied = tileInfo.occupied,
-                                                   occupiable = tileInfo.occupiable;
+  TerrainTile(this.x, this.y, TileInfo tileInfo)
+      : cost = tileInfo.cost,
+        spriteName = tileInfo.sprite,
+        occupied = tileInfo.occupied,
+        occupiable = tileInfo.occupiable;
   String toString() => '$x:$y';
 }
 
@@ -51,15 +52,16 @@ class Food extends Component {
   double filling, hardness, sweetness;
   double timeToEat, timeLeftToEat;
   String name;
-  Food(this.name, {this.filling: 20.0, this.hardness: 20.0, this.sweetness: 20.0, this.timeToEat: 1000.0}) {
+  Food(this.name, {this.filling: 20.0, this.hardness: 20.0,
+      this.sweetness: 20.0, this.timeToEat: 1.0}) {
     timeLeftToEat = timeToEat;
   }
 }
 
 class State extends Component {
   double hunger = 0.0,
-         looseness = 0.0,
-         caries = 0.0;
+      looseness = 0.0,
+      caries = 0.0;
   State();
 }
 
