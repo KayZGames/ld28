@@ -29,7 +29,7 @@ class TerrainRenderingSystem extends EntitySystem {
     ctx.drawImage(terrainBuffer.canvas, 0, 0);
   }
 
-  bool checkProcessing() => true;
+  bool checkProcessing() => !state.startScreen;
 }
 
 class SpriteRenderingSystem extends EntityProcessingSystem {
@@ -54,6 +54,8 @@ class SpriteRenderingSystem extends EntityProcessingSystem {
     ctx.drawImageToRect(spriteSheet.image, sprite.dst, sourceRect: sprite.src);
     ctx.restore();
   }
+
+  bool checkProcessing() => !state.startScreen;
 }
 
 class StateRenderingSystem extends EntityProcessingSystem {
@@ -108,6 +110,8 @@ class StateRenderingSystem extends EntityProcessingSystem {
         50 + s.caries.toInt() * 2, 200 - s.caries.toInt() * 2, 0);
     ctx.fillRect(width - 100, 50, s.caries, 20);
   }
+
+  bool checkProcessing() => !state.startScreen;
 }
 
 class StartScreenRenderingSystem extends VoidEntitySystem {
@@ -298,6 +302,8 @@ class ButtonRenderingSystem extends VoidEntitySystem {
         ..fillText(button.label, button.textPos.left, button.textPos.top);
     }
   }
+
+  bool checkProcessing() => !state.startScreen;
 }
 
 class GameLostRenderingSystem extends EntityProcessingSystem {
